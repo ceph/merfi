@@ -5,12 +5,17 @@ import re
 
 class FileCollector(list):
 
-    def __init__(self, path, config=None):
+    def __init__(self, config=None):
         config = config or {}
         self.user_match = config.get('match')
         self.case_insensitive = config.get('ignorecase')
-        self.path = path
+        self.path = self._abspath(config.get('path', '.'))
         self._collect()
+
+    def _abspath(self, path):
+        if not path.startswith('/'):
+            return os.path.abspath(path)
+        return path
 
     @property
     def valid_name(self):
@@ -38,6 +43,6 @@ class FileCollector(list):
         for root, dirs, files in walk(path):
             for item in files:
                 absolute_path = join(root, item)
-                if not self.valid_module_name.match(item):
+                if not self.valid_name.match(item):
                     continue
                 self.append(absolute_path)
