@@ -1,0 +1,3 @@
+
+class RpmSign(object):
+    pass
