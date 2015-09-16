@@ -25,6 +25,21 @@ What is really doing behind the scenes is using ``rpm-sign`` like this::
     rpm-sign --key "mykey" --clearsign Release > InRelease
 
 
+gpg
+---
+GPG support is similar to ``rpm-sign`` in that it will crawl a path (defaults
+to the current working directory) and sign the ``Release`` file::
+
+    $ merfi gpg
+    --> signing: /Users/alfredo/repos/debian/Release
+    --> signed: /Users/alfredo/repos/debian/Release.gpg
+    --> signed: /Users/alfredo/repos/debian/InRelease
+
+Behind the scenes the tool is running ``gpg`` like::
+
+    gpg --armor --detach-sig Release
+    gpg --clearsign Release > InRelease
+
 About the name
 --------------
 *"Firme"* is the Spanish word for "sign" and *"merfi"* is the Peruvian slang
