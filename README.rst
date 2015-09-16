@@ -14,6 +14,10 @@ the file like::
     --> signed: /Users/alfredo/repos/debian/Release.gpg
     --> signed: /Users/alfredo/repos/debian/InRelease
 
+Like all the other supported backends, it will crawl from the current working
+directory unless a path is specified::
+
+    $ merfi rpm-sign --key "mykey" /opt/packages
 
 What is really doing behind the scenes is using ``rpm-sign`` like this::
 
