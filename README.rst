@@ -37,7 +37,7 @@ to the current working directory) and sign the ``Release`` file::
 
 Behind the scenes the tool is running ``gpg`` like::
 
-    gpg --armor --detach-sig Release
+    gpg --armor --detach-sig Release --output Release.gpg
     gpg --clearsign Release > InRelease
 
 About the name
