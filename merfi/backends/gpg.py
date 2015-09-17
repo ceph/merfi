@@ -12,6 +12,13 @@ class Gpg(object):
 Signs files with gpg. Crawls a given path looking for 'Release' files (by
 default)
 
+Default behavior will perform these actions on 'Release' files::
+
+    gpg --armor --detach-sig --output Release.gpg Release
+    gpg --clearsign --output InRelease Release
+
+Options:
+
 --output      Custom filename output (vs. $filename.asc).
               Defaults to Release.gpg
 
@@ -27,8 +34,12 @@ Positional Arguments:
         self.default_keyfile = '/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release'
 
     def get_path(self, arguments):
-        if os.path.exists(arguments[-1]):
-            return os.path.abspath(arguments[-1])
+        try:
+            path = arguments[-1]
+        except IndexError:
+            path = '.'
+        if os.path.exists(path):
+            return os.path.abspath(path)
         else:
             return os.path.abspath('.')
 
@@ -39,14 +50,14 @@ Positional Arguments:
         file_output = parser.get('--output') or self.default_keyfile
         merfi.config['path'] = self.get_path(parser.arguments)
         self.check_dependencies()
-        self.sign()
+        self.sign(file_output)
 
     def check_dependencies(self):
         if not util.which(self.executable):
             logger.error('could not find %s' % self.executable)
             raise RuntimeError('%s needs to be installed and available in $PATH' % self.executable)
 
-    def sign(self):
+    def sign(self, file_output):
         logger.info('Starting path collection, looking for files to sign')
         paths = FileCollector(merfi.config)
         if paths:
@@ -66,5 +77,9 @@ Positional Arguments:
                 logger.info('[CHECKMODE] signed: %s' % new_gpg_path)
                 logger.info('[CHECKMODE] signed: %s' % new_in_path)
             else:
-                # XXX do actual signing here
-                pass
+                os.chdir(path)
+                # FIXME: this needs to allow for configurable output name
+                detached = ['gpg', '--armor', '--detach-sig', '--output', 'Release.gpg', 'Release']
+                clearsign = ['gpg', '--clearsign', '--output', 'InRelease', 'Release']
+                util.run(detached)
+                util.run(clearsign)
