@@ -1,5 +1,9 @@
+import subprocess
+import sys
+from select import select
 import os
 import sys
+from merfi import logger
 
 
 def which(executable):
@@ -97,3 +101,78 @@ class colorize(str):
 #
 red_arrow = colorize.make('-->').red
 blue_arrow = colorize.make('-->').blue
+
+
+def run_check(command, **kw):
+    logger.info('Running command: %s' % ' '.join(command))
+    _run(command, stop_on_nonzero=True, **kw)
+
+
+def run(command, exit=False, **kw):
+    logger.info('Running command: %s' % ' '.join(command))
+    if exit:
+        raise SystemExit(0)
+
+
+def _run(cmd, **kw):
+    stop_on_nonzero = kw.pop('stop_on_nonzero', True)
+
+    process = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        close_fds=True,
+        **kw
+    )
+
+    while True:
+        reads, _, _ = select(
+            [process.stdout.fileno(), process.stderr.fileno()],
+            [], []
+        )
+
+        for descriptor in reads:
+            if descriptor == process.stdout.fileno():
+                read = process.stdout.readline()
+                if read:
+                    logger.info(read)
+                    sys.stdout.flush()
+
+            if descriptor == process.stderr.fileno():
+                read = process.stderr.readline()
+                if read:
+                    logger.warning(read)
+                    sys.stderr.flush()
+
+        if process.poll() is not None:
+            while True:
+                for descriptor in reads:
+                    if descriptor == process.stdout.fileno():
+                        read = process.stdout.readline()
+                        if read:
+                            logger.info(read)
+                            sys.stdout.flush()
+
+                    if descriptor == process.stderr.fileno():
+                        read = process.stderr.readline()
+                        if read:
+                            logger.warning(read)
+                            sys.stderr.flush()
+                # At this point we have gone through all the possible
+                # descriptors and `read` was empty, so we now can break out of
+                # this since all stdout/stderr has been properly flushed to
+                # logging
+                if not read:
+                    break
+
+            break
+
+    returncode = process.wait()
+    if returncode != 0:
+        if stop_on_nonzero:
+            raise RuntimeError(
+                "command returned non-zero exit status: %s" % returncode
+            )
+        else:
+            logger.warning("command returned non-zero exit status: %s" % returncode)
+
