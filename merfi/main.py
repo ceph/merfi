@@ -43,13 +43,15 @@ gpg                 Uses `gpg` to sign files
 
     @catches((RuntimeError, KeyboardInterrupt))
     def main(self, argv):
-        options = [['--log', '--logging']]
+        # TODO: Need to implement `--filename` and make it available
+        options = [['--log', '--logging'], '--filename']
         parser = Transport(argv, mapper=self.mapper,
                            options=options, check_help=False,
                            check_version=False)
         parser.parse_args()
         merfi.config['verbosity'] = parser.get('--log', 'info')
         merfi.config['check'] = parser.has('--check')
+        merfi.config['filename'] = parser.get('--filename')
         parser.catch_help = self.help()
         parser.catch_version = merfi.__version__
         parser.mapper = self.mapper
