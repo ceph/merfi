@@ -1,4 +1,28 @@
+import os
 import sys
+
+
+def which(executable):
+    """find the location of an executable"""
+    if 'PATH' in os.environ:
+        envpath = os.environ['PATH']
+    else:
+        envpath = os.defpath
+    PATH = envpath.split(os.pathsep)
+
+    locations = PATH + [
+        '/usr/local/bin',
+        '/bin',
+        '/usr/bin',
+        '/usr/local/sbin',
+        '/usr/sbin',
+        '/sbin',
+    ]
+
+    for location in locations:
+        executable_path = os.path.join(location, executable)
+        if os.path.isfile(executable_path) and os.access(executable_path, os.X_OK):
+            return executable_path
 
 
 class colorize(str):
