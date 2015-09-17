@@ -17,6 +17,8 @@ Version: %s
 Global Options:
 --log, --logging    Set the level of logging. Acceptable values:
                     debug, warning, error, critical
+--check             Don't perform any actions, attempt to determine what would
+                    happen and spit output as similar as possible
 
 Sub Commands:
 rpm-sign            Uses the `rpm-sign` utility to sign files
@@ -39,7 +41,7 @@ gpg                 Uses `gpg` to sign files
     def help(self):
         return self._help % (merfi.__version__)
 
-    @catches(KeyboardInterrupt)
+    @catches((RuntimeError, KeyboardInterrupt))
     def main(self, argv):
         options = [['--log', '--logging']]
         parser = Transport(argv, mapper=self.mapper,
@@ -47,6 +49,7 @@ gpg                 Uses `gpg` to sign files
                            check_version=False)
         parser.parse_args()
         merfi.config['verbosity'] = parser.get('--log', 'info')
+        merfi.config['check'] = parser.has('--check')
         parser.catch_help = self.help()
         parser.catch_version = merfi.__version__
         parser.mapper = self.mapper
