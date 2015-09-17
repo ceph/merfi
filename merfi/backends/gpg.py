@@ -3,6 +3,7 @@ from tambo import Transport
 from merfi.collector import FileCollector
 import merfi
 from merfi import logger
+from merfi import util
 
 
 class Gpg(object):
@@ -19,6 +20,7 @@ Positional Arguments:
 [path]        The path to crawl for signing release files. Defaults to current
               working directory
 """
+    executable = 'gpg'
 
     def __init__(self, argv):
         self.argv = argv
@@ -36,7 +38,13 @@ Positional Arguments:
         parser.parse_args()
         file_output = parser.get('--output') or self.default_keyfile
         merfi.config['path'] = self.get_path(parser.arguments)
+        self.check_dependencies()
         self.sign()
+
+    def check_dependencies(self):
+        if not util.which(self.executable):
+            logger.error('could not find %s' % self.executable)
+            raise RuntimeError('%s needs to be installed and available in $PATH' % self.executable)
 
     def sign(self):
         logger.info('Starting path collection, looking for files to sign')
