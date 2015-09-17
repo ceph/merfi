@@ -7,7 +7,7 @@ class FileCollector(list):
 
     def __init__(self, config=None):
         config = config or {}
-        self.user_match = config.get('match')
+        self.user_match = config.get('filename')
         self.case_insensitive = config.get('ignorecase')
         self.path = self._abspath(config.get('path', '.'))
         self._collect()
