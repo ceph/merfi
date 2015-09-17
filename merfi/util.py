@@ -110,6 +110,7 @@ def run_check(command, **kw):
 
 def run(command, exit=False, **kw):
     logger.info('Running command: %s' % ' '.join(command))
+    _run(command, stop_on_nonzero=True, **kw)
     if exit:
         raise SystemExit(0)
 
