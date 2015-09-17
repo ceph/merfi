@@ -2,6 +2,7 @@ import os
 from tambo import Transport
 from merfi.collector import FileCollector
 import merfi
+from merfi import logger
 
 
 class Gpg(object):
@@ -38,6 +39,24 @@ Positional Arguments:
         self.sign()
 
     def sign(self):
+        logger.info('Starting path collection, looking for files to sign')
         paths = FileCollector(merfi.config)
+        if paths:
+            logger.info('%s matching paths found' % len(paths))
+            # FIXME: this should spit the actual verified command
+            logger.info('will sign with the following commands:')
+            logger.info('gpg --armor --detach-sig --output Release.gpg Release')
+            logger.info('gpg --clearsign --output InRelease Release')
+        else:
+            logger.warning('No paths found that matched')
+
         for path in paths:
-            print path
+            if merfi.config['check']:
+                new_gpg_path = path.split('Release')[0]+'Release.gpg'
+                new_in_path = path.split('Release')[0]+'InRelease'
+                logger.info('[CHECKMODE] signing: %s' % path)
+                logger.info('[CHECKMODE] signed: %s' % new_gpg_path)
+                logger.info('[CHECKMODE] signed: %s' % new_in_path)
+            else:
+                # XXX do actual signing here
+                pass
