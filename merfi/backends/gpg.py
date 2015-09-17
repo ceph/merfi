@@ -77,9 +77,10 @@ Positional Arguments:
                 logger.info('[CHECKMODE] signed: %s' % new_gpg_path)
                 logger.info('[CHECKMODE] signed: %s' % new_in_path)
             else:
-                os.chdir(path)
+                os.chdir(os.path.dirname(path))
                 # FIXME: this needs to allow for configurable output name
                 detached = ['gpg', '--armor', '--detach-sig', '--output', 'Release.gpg', 'Release']
                 clearsign = ['gpg', '--clearsign', '--output', 'InRelease', 'Release']
+                logger.info('signing: %s' % path)
                 util.run(detached)
                 util.run(clearsign)
