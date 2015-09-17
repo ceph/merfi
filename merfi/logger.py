@@ -43,7 +43,7 @@ class LogMessage(object):
         return True
 
     def header(self):
-        from delgado.util import colorize
+        from merfi.util import colorize
         colored = colorize.make(self.base_string)
         return getattr(colored, self.level_color)
 
@@ -72,8 +72,8 @@ class LogMessage(object):
             self.writer.write(self.line())
 
     def get_config_level(self):
-        import delgado
-        level = delgado.config.get('verbosity', 'error')
+        import merfi
+        level = merfi.config.get('verbosity', 'error')
         return _reverse_level_names.get(level, 4)
 
 
