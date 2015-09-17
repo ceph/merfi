@@ -4,7 +4,6 @@ from merfi.collector import FileCollector
 import merfi
 from merfi import logger
 from merfi import util
-from merfi.backends import BaseBackend
 
 
 class Gpg(object):
@@ -40,7 +39,6 @@ Positional Arguments:
         parser.catch_help = self._help
         parser.parse_args()
         file_output = parser.get('--output') or self.default_keyfile
-        merfi.config['path'] = self.get_path(parser.arguments)
         util.check_dependency(self.executable)
         self.sign(file_output)
 
