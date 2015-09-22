@@ -33,7 +33,6 @@ gpg                 Uses `gpg` to sign files
     }
 
     def __init__(self, argv=None, parse=True):
-        self.plugin_help = "No plugins found/loaded"
         if argv is None:
             argv = sys.argv
         if parse:
@@ -42,21 +41,6 @@ gpg                 Uses `gpg` to sign files
     def help(self):
         return self._help % (merfi.__version__)
 
-    def infer_path(self, arguments):
-        """
-        Infer the path to perform collection. It is OK if we didn't get one
-        or something else was asked, because we can always set it to a sane
-        default and not do work on collecting.
-        """
-        try:
-            path = arguments[-1]
-        except IndexError:
-            # we didn't get an explicit path to work with
-            path = '.'
-        if os.path.exists(path):
-            return os.path.abspath(path)
-        else:
-            raise RuntimeError('%s is not a valid (existing) path')
 
     @catches((RuntimeError, KeyboardInterrupt))
     def main(self, argv):
@@ -66,7 +50,6 @@ gpg                 Uses `gpg` to sign files
                            options=options, check_help=False,
                            check_version=False)
         parser.parse_args()
-        merfi.config['path'] = self.infer_path(parser.arguments)
         merfi.config['verbosity'] = parser.get('--log', 'info')
         merfi.config['check'] = parser.has('--check')
         merfi.config['filename'] = parser.get('--filename')
