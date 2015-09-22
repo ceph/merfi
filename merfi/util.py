@@ -2,8 +2,27 @@ import subprocess
 import sys
 from select import select
 import os
-import sys
 from merfi import logger
+
+
+def infer_path(arguments):
+    """
+    Infer the path from a list of potential paths. List might be empty and with
+    items that are not paths.
+
+    If arguments is an empty list it defaults to using the current working
+    directory.
+    """
+    try:
+        path = arguments[-1]
+    except IndexError:
+        # we didn't get an explicit path to work with so just return the
+        # current working directory
+        return os.getcwd()
+    if os.path.exists(path):
+        return os.path.abspath(path)
+    else:
+        raise RuntimeError('"%s" is not a valid path' % path)
 
 
 def which(executable):
