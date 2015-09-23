@@ -3,6 +3,8 @@
 A helper tool to quickly crawl a file system and sign commonly used files for
 repositories, with gpg, rpm-sign, and any other similar tool.
 
+*"a tool called "merfi" ... what could possibly go wrong?"*
+
 rpm-sign
 --------
 For `rpm-sign`, the default operation will just crawl the filesystem and
