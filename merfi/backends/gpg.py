@@ -40,6 +40,7 @@ Positional Arguments:
         parser.parse_args()
         file_output = parser.get('--output') or self.default_keyfile
         util.check_dependency(self.executable)
+        merfi['path'] = util.infer_path(parser.unkown_commands)
         self.sign(file_output)
 
     def sign(self, file_output):
@@ -65,7 +66,7 @@ Positional Arguments:
                 os.chdir(os.path.dirname(path))
                 # FIXME: this needs to allow for configurable output name
                 detached = ['gpg', '--batch', '--yes', '--armor', '--detach-sig', '--output', 'Release.gpg', 'Release']
-                clearsign = ['gpg', '--batch', '--yes','--clearsign', '--output', 'InRelease', 'Release']
+                clearsign = ['gpg', '--batch', '--yes', '--clearsign', '--output', 'InRelease', 'Release']
                 logger.info('signing: %s' % path)
                 util.run(detached)
                 util.run(clearsign)
