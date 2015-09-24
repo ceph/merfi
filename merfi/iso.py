@@ -25,6 +25,7 @@ Positional Arguments:
 [source directory]  The path to create the ISO from. Required with no defaults.
 """
     executable = 'genisoimage'
+    name = 'iso'
 
     def __init__(self, argv):
         self.argv = argv
