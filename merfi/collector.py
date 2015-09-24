@@ -5,12 +5,14 @@ import re
 
 class FileCollector(list):
 
-    def __init__(self, config=None):
+    def __init__(self, config=None, _eager=True):
         config = config or {}
         self.user_match = config.get('filename')
         self.case_insensitive = config.get('ignorecase')
         self.path = self._abspath(config.get('path', '.'))
-        self._collect()
+        # making it easier to test
+        if _eager:
+            self._collect()
 
     def _abspath(self, path):
         if not path.startswith('/'):
