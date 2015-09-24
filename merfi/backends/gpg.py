@@ -28,6 +28,7 @@ Positional Arguments:
               working directory
 """
     executable = 'gpg'
+    name = 'gpg'
 
     def __init__(self, argv):
         self.argv = argv

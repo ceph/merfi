@@ -22,6 +22,7 @@ Positional Arguments:
               working directory
     """
     executable = 'rpm-sign'
+    name = 'rpm-sign'
 
     def __init__(self, argv):
         self.argv = argv
