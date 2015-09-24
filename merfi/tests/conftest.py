@@ -3,6 +3,12 @@ import pytest
 import shutil
 import tempfile
 
+# TODO: Enhance this fixture so that we distinguish between the "Release"
+# files that need to be signed and the ones that do not.
+#   - Create more bogus "Releases" files that don't need to be signed.
+#   - Write a line "SHA256:" into the correct "Releases" file that *should* be
+#     signed.
+# See https://github.com/alfredodeza/merfi/issues/6
 @pytest.fixture(scope="module")
 def repotree(request):
     # Create a basic skeleton repository with "Release" files to sign.
