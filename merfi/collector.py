@@ -1,15 +1,16 @@
 from __future__ import with_statement
 import os
 import re
+import merfi
 
 
 class FileCollector(list):
 
-    def __init__(self, config=None, _eager=True):
-        config = config or {}
+    def __init__(self, path=None, config=None, _eager=True):
+        config = config or merfi.config
         self.user_match = config.get('filename')
         self.case_insensitive = config.get('ignorecase')
-        self.path = self._abspath(config.get('path', '.'))
+        self.path = self._abspath(path or '.')
         # making it easier to test
         if _eager:
             self._collect()
