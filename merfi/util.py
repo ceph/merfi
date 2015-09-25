@@ -53,8 +53,8 @@ def check_dependency(executable):
     Raise a RuntimeError if the dependency is not available in $PATH
     """
     if not which(executable):
-        logger.error('could not find %s' % self.executable)
-        raise RuntimeError('%s needs to be installed and available in $PATH' % self.executable)
+        logger.error('could not find %s' % executable)
+        raise RuntimeError('%s needs to be installed and available in $PATH' % executable)
 
 
 class colorize(str):
