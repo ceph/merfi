@@ -1,12 +1,11 @@
 import os
-from tambo import Transport
 from merfi.collector import FileCollector
 import merfi
-from merfi import logger
-from merfi import util
+from merfi import logger, util
+from merfi.backends import base
 
 
-class Gpg(object):
+class Gpg(base.BaseBackend):
     help_menu = 'gpg handler for signing files'
     _help = """
 Signs files with gpg. Crawls a given path looking for 'Release' files (by
@@ -16,6 +15,8 @@ Default behavior will perform these actions on 'Release' files::
 
     gpg --armor --detach-sig --output Release.gpg Release
     gpg --clearsign --output InRelease Release
+
+%s
 
 Options:
 
@@ -28,24 +29,13 @@ Positional Arguments:
               working directory
 """
     executable = 'gpg'
+    name = 'gpg'
+    options = ['--output']
 
-    def __init__(self, argv):
-        self.argv = argv
-        # XXX not sure why/if we need this
-        self.default_keyfile = '/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release'
-
-    def parse_args(self):
-        parser = Transport(self.argv)
-        parser.catch_help = self._help
-        parser.parse_args()
-        file_output = parser.get('--output') or self.default_keyfile
-        util.check_dependency(self.executable)
-        merfi['path'] = util.infer_path(parser.unkown_commands)
-        self.sign(file_output)
-
-    def sign(self, file_output):
+    def sign(self):
         logger.info('Starting path collection, looking for files to sign')
-        paths = FileCollector(merfi.config)
+        self.output = self.parser.get('--output', 'Release.gpg')
+        paths = FileCollector(path=self.path)
         if paths:
             logger.info('%s matching paths found' % len(paths))
             # FIXME: this should spit the actual verified command

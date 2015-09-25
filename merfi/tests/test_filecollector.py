@@ -6,10 +6,10 @@ from merfi.collector import FileCollector
 class TestFileCollector(object):
 
     def setup(self):
-        self.paths = FileCollector({'path': '/'}, _eager=False)
+        self.paths = FileCollector(path='/', _eager=False)
 
     def test_simple_tree(self, repotree):
-        paths = FileCollector({'path': repotree})
+        paths = FileCollector(path=repotree)
         expected = [
             os.path.join(repotree, 'dists', 'precise', 'Release'),
             os.path.join(repotree, 'dists', 'trusty',  'Release'),

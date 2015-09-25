@@ -1,9 +1,8 @@
-import os
 import sys
 
 from tambo import Transport
-from merfi import logger
 from merfi import backends
+from merfi import iso
 import merfi
 from merfi.decorators import catches
 
@@ -22,14 +21,14 @@ Global Options:
                     happen and spit output as similar as possible
 
 Sub Commands:
-rpm-sign            Uses the `rpm-sign` utility to sign files
-gpg                 Uses `gpg` to sign files
+%s
 
     """
 
     mapper = {
         'rpm-sign': backends.rpm_sign.RpmSign,
-        'gpg': backends.gpg.Gpg
+        'gpg': backends.gpg.Gpg,
+        'iso': iso.Iso
     }
 
     def __init__(self, argv=None, parse=True):
@@ -39,8 +38,10 @@ gpg                 Uses `gpg` to sign files
             self.main(argv)
 
     def help(self):
-        return self._help % (merfi.__version__)
-
+        sub_help = '\n'.join(['%-19s %s' % (
+            sub.name, getattr(sub, 'help_menu', ''))
+            for sub in self.mapper.values()])
+        return self._help % (merfi.__version__, sub_help)
 
     @catches((RuntimeError, KeyboardInterrupt))
     def main(self, argv):
