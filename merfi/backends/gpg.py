@@ -20,9 +20,6 @@ Default behavior will perform these actions on 'Release' files::
 
 Options:
 
---output      Custom filename output (vs. $filename.asc).
-              Defaults to Release.gpg
-
 Positional Arguments:
 
 [path]        The path to crawl for signing release files. Defaults to current
@@ -30,11 +27,9 @@ Positional Arguments:
 """
     executable = 'gpg'
     name = 'gpg'
-    options = ['--output']
 
     def sign(self):
         logger.info('Starting path collection, looking for files to sign')
-        self.output = self.parser.get('--output', 'Release.gpg')
         paths = FileCollector(path=self.path)
         if paths:
             logger.info('%s matching paths found' % len(paths))
@@ -54,7 +49,6 @@ Positional Arguments:
                 logger.info('[CHECKMODE] signed: %s' % new_in_path)
             else:
                 os.chdir(os.path.dirname(path))
-                # FIXME: this needs to allow for configurable output name
                 detached = ['gpg', '--batch', '--yes', '--armor', '--detach-sig', '--output', 'Release.gpg', 'Release']
                 clearsign = ['gpg', '--batch', '--yes', '--clearsign', '--output', 'InRelease', 'Release']
                 logger.info('signing: %s' % path)
