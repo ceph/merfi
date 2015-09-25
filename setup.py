@@ -13,7 +13,7 @@ setup(
     author = 'Alfredo Deza',
     author_email = 'alfredo [at] deza.pe',
     scripts = ['bin/merfi'],
-    install_requires = ['tambo'],
+    install_requires = ['tambo>=0.1.0'],
     version = metadata['version'],
     url = 'http://github.com/alfredodeza/merfi',
     license = "MIT",
