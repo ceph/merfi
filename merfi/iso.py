@@ -18,7 +18,7 @@ Default behavior will perform these actions on a source directory::
 
 Options:
 
---output      Custom filename output (defaults to 'isofile').
+-o, --output      Custom filename output (defaults to 'isofile').
 
 Positional Arguments:
 
@@ -28,7 +28,14 @@ Positional Arguments:
     name = 'iso'
 
     def parse_args(self):
-        parser = Transport(self.argv)
+        options = [['--output', '-o']]
+        parser = Transport(self.argv, options=options)
         parser.catch_help = self.help()
         parser.parse_args()
+        self.output = parser.get('--output', 'isofile')
+        self.source = util.infer_path(parser.unknown_commands)
         self.check_dependency()
+
+    def make_iso(self):
+        cmd = ['genisoimage', '-r', '-o', self.output, self.source]
+        util.run(cmd)
