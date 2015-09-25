@@ -35,6 +35,7 @@ Positional Arguments:
         self.output = parser.get('--output', 'isofile')
         self.source = util.infer_path(parser.unknown_commands)
         self.check_dependency()
+        self.make_iso()
 
     def make_iso(self):
         cmd = ['genisoimage', '-r', '-o', self.output, self.source]
