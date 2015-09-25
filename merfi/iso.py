@@ -31,4 +31,5 @@ Positional Arguments:
         self.argv = argv
 
     def parse_args(self):
+        util.check_dependency(self.executable)
         pass
