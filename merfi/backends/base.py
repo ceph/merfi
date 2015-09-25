@@ -11,7 +11,7 @@ class BaseBackend(base.BaseCommand):
         self.parser = Transport(self.argv, options=self.options)
         self.parser.catch_help = self.help()
         self.parser.parse_args()
-        self.path = util.infer_path(self.parser.unkown_commands)
+        self.path = util.infer_path(self.parser.unknown_commands)
         self.check_dependency()
         self.sign()
 
