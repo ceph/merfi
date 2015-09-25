@@ -48,12 +48,13 @@ def which(executable):
             return executable_path
 
 
-def check_dependency(executable):
+def check_dependency(executable, silent=False):
     """
     Raise a RuntimeError if the dependency is not available in $PATH
     """
     if not which(executable):
-        logger.error('could not find %s' % executable)
+        if not silent:
+            logger.error('could not find %s' % executable)
         raise RuntimeError('%s needs to be installed and available in $PATH' % executable)
 
 
