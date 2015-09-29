@@ -17,7 +17,7 @@ default)
 
 Options
 
---key         Name of the key to use
+--key         Name of the key to use (see rpm-sign --list-keys)
 --keyfile     Full path location of the keyfile, defaults to
               /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
 
@@ -40,10 +40,8 @@ Positional Arguments:
             logger.info('%s matching paths found' % len(paths))
             # FIXME: this should spit the actual verified command
             logger.info('will sign with the following commands:')
-            logger.info('gpg --armor --detach-sig --output Release.gpg Release')
-            logger.info('gpg --clearsign --output InRelease Release')
             logger.info('rpm-sign --key "%s" --detachsign Release --output Release.gpg' % self.key)
-            logger.info('rpm-sign --key "%s" --clearsign Release > InRelease' % self.key)
+            logger.info('rpm-sign --key "%s" --clearsign Release --output InRelease' % self.key)
         else:
             logger.warning('No paths found that matched')
 
@@ -55,5 +53,9 @@ Positional Arguments:
                 logger.info('[CHECKMODE] signed: %s' % new_gpg_path)
                 logger.info('[CHECKMODE] signed: %s' % new_in_path)
             else:
-                # XXX do actual signing here
-                pass
+                os.chdir(os.path.dirname(path))
+                detached = ['rpm-sign', '--key', self.key, '--detachsign', 'Release', '--output', 'Release.gpg']
+                clearsign = ['rpm-sign', '--key', self.key, '--clearsign', 'Release', '--output', 'InRelease']
+                logger.info('signing: %s' % path)
+                util.run(detached)
+                util.run(clearsign)
