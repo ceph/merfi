@@ -134,7 +134,7 @@ blue_arrow = colorize.make('-->').blue
 
 def run_output(command, **kw):
     logger.info('Running command: %s' % ' '.join(command))
-    _run_output(command, **kw)
+    return _run_output(command, **kw)
 
 
 def _run_output(cmd, verbose=False, **kw):
