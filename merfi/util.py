@@ -148,7 +148,7 @@ def _run_output(cmd, verbose=False, **kw):
             logger.debug(line)
         for line in stderr:
             logger.warning(stderr)
-    return stdout, stderr, process.wait()
+    return '\n'.join(stdout), '\n'.join(stderr), process.wait()
 
 
 def run(command, **kw):
