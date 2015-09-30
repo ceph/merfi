@@ -132,16 +132,28 @@ red_arrow = colorize.make('-->').red
 blue_arrow = colorize.make('-->').blue
 
 
-def run_check(command, **kw):
+def run_output(command, **kw):
     logger.info('Running command: %s' % ' '.join(command))
-    _run(command, stop_on_nonzero=True, **kw)
+    _run_output(command, **kw)
 
 
-def run(command, exit=False, **kw):
+def _run_output(cmd, verbose=False, **kw):
+    process = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kw
+    )
+    stdout = [line.strip('\n') for line in process.stdout.readlines()]
+    stderr = [line.strip('\n') for line in process.stderr.readlines()]
+    if verbose:
+        for line in stdout:
+            logger.debug(line)
+        for line in stderr:
+            logger.warning(stderr)
+    return stdout, stderr, process.wait()
+
+
+def run(command, **kw):
     logger.info('Running command: %s' % ' '.join(command))
     _run(command, stop_on_nonzero=True, **kw)
-    if exit:
-        raise SystemExit(0)
 
 
 def _run(cmd, **kw):
