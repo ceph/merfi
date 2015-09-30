@@ -1,3 +1,5 @@
+from hashlib import sha256
+import os
 from tambo import Transport
 from merfi.collector import FileCollector
 import merfi
@@ -13,6 +15,7 @@ source directory has proper read permissions).
 Default behavior will perform these actions on a source directory::
 
     genisoimage -r -o isofile {source directory}
+    sha256sum isofile > isofile.SHA256SUM
 
 %s
 
@@ -36,7 +39,18 @@ Positional Arguments:
         self.source = util.infer_path(parser.unknown_commands)
         self.check_dependency()
         self.make_iso()
+        self.make_sha256sum()
 
     def make_iso(self):
         cmd = ['genisoimage', '-r', '-o', self.output, self.source]
         util.run(cmd)
+
+    def make_sha256sum(self):
+        chsum = sha256()
+        self.output_checksum = self.output + '.SHA256SUM'
+        with open(self.output, 'rb') as f:
+            for chunk in iter(lambda: f.read(4096), b""):
+                chsum.update(chunk)
+        digest = chsum.hexdigest()
+        with open(self.output_checksum, 'w') as chsumf:
+            chsumf.write("%s  %s\n" % (digest, os.path.basename(self.output)))
