@@ -30,6 +30,19 @@ Positional Arguments:
     name = 'rpm-sign'
     options = ['--key']
 
+    def clear_sign(self, path):
+        """
+        When doing a "clearsign" with rpm-sign, the output goes to stdout, so
+        that needs to be captured and written to the default output file for
+        clear signed signatures (InRelease).
+        """
+        clearsign = ['rpm-sign', '--key', self.key, '--clearsign', 'Release']
+        logger.info('signing: %s' % path)
+        out, err, code = util.run_output(clearsign)
+        absolute_directory = os.path.dirname(os.path.abspath(path))
+        with open(os.path.join(absolute_directory, 'InRelease'), 'w') as f:
+            f.write(out)
+
     def sign(self):
         logger.info('Starting path collection, looking for files to sign')
         self.keyfile = self.parser.get('--keyfile', 'Release.gpg')
@@ -55,7 +68,6 @@ Positional Arguments:
             else:
                 os.chdir(os.path.dirname(path))
                 detached = ['rpm-sign', '--key', self.key, '--detachsign', 'Release', '--output', 'Release.gpg']
-                clearsign = ['rpm-sign', '--key', self.key, '--clearsign', 'Release', '--output', 'InRelease']
                 logger.info('signing: %s' % path)
                 util.run(detached)
-                util.run(clearsign)
+                self.clear_sign(path)
