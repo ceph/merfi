@@ -17,7 +17,7 @@ default)
 
 Options
 
---key         Name of the key to use
+--key         Name of the key to use (see rpm-sign --list-keys)
 --keyfile     Full path location of the keyfile, defaults to
               /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
 
@@ -30,6 +30,19 @@ Positional Arguments:
     name = 'rpm-sign'
     options = ['--key']
 
+    def clear_sign(self, path):
+        """
+        When doing a "clearsign" with rpm-sign, the output goes to stdout, so
+        that needs to be captured and written to the default output file for
+        clear signed signatures (InRelease).
+        """
+        clearsign = ['rpm-sign', '--key', self.key, '--clearsign', 'Release']
+        logger.info('signing: %s' % path)
+        out, err, code = util.run_output(clearsign)
+        absolute_directory = os.path.dirname(os.path.abspath(path))
+        with open(os.path.join(absolute_directory, 'InRelease'), 'w') as f:
+            f.write(out)
+
     def sign(self):
         logger.info('Starting path collection, looking for files to sign')
         self.keyfile = self.parser.get('--keyfile', 'Release.gpg')
@@ -40,10 +53,8 @@ Positional Arguments:
             logger.info('%s matching paths found' % len(paths))
             # FIXME: this should spit the actual verified command
             logger.info('will sign with the following commands:')
-            logger.info('gpg --armor --detach-sig --output Release.gpg Release')
-            logger.info('gpg --clearsign --output InRelease Release')
             logger.info('rpm-sign --key "%s" --detachsign Release --output Release.gpg' % self.key)
-            logger.info('rpm-sign --key "%s" --clearsign Release > InRelease' % self.key)
+            logger.info('rpm-sign --key "%s" --clearsign Release --output InRelease' % self.key)
         else:
             logger.warning('No paths found that matched')
 
@@ -55,5 +66,8 @@ Positional Arguments:
                 logger.info('[CHECKMODE] signed: %s' % new_gpg_path)
                 logger.info('[CHECKMODE] signed: %s' % new_in_path)
             else:
-                # XXX do actual signing here
-                pass
+                os.chdir(os.path.dirname(path))
+                detached = ['rpm-sign', '--key', self.key, '--detachsign', 'Release', '--output', 'Release.gpg']
+                logger.info('signing: %s' % path)
+                util.run(detached)
+                self.clear_sign(path)
