@@ -42,6 +42,19 @@ Behind the scenes the tool is running ``gpg`` like::
     gpg --armor --detach-sig --output Release.gpg Release
     gpg --clearsign --output InRelease Release
 
+iso
+---
+merfi can generate an ISO from a tree of package repositories::
+
+    $ merfi iso /opt/packages --output my-dvd.iso
+
+This will generate two files, ``my-dvd.iso`` and ``my-dvd.iso.SHA256SUM``. You
+can verify the ISO file's integrity by passing the checksum file to the
+``sha256sum -c`` command::
+
+    $ sha256sum -c my-dvd.iso.SHA256SUM
+    my-dvd.iso: OK
+
 About the name
 --------------
 *"Firme"* is the Spanish word for "sign" and *"merfi"* is the Peruvian slang
