@@ -4,8 +4,8 @@ import merfi
 # inherit this class when testing a backend
 class BaseBackendTest(object):
 
-    def test_sign_no_files(self, m_util):
-        self.backend.path = ''
+    def test_sign_no_files(self, m_util, tmpdir):
+        self.backend.path = str(tmpdir)
         self.backend.sign()
 
     def test_sign_two_files(self, m_util, repotree):

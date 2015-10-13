@@ -12,8 +12,8 @@ class TestGpg(BaseBackendTest):
     clearsign = ['gpg', '--batch', '--yes', '--clearsign', '--output', 'InRelease', 'Release']
 
     @patch("merfi.backends.gpg.util")
-    def test_sign_no_files(self, m_util):
-        super(TestGpg, self).test_sign_no_files(m_util)
+    def test_sign_no_files(self, m_util, tmpdir):
+        super(TestGpg, self).test_sign_no_files(m_util, tmpdir)
         assert not m_util.run.called
 
     @patch("merfi.backends.gpg.util")
