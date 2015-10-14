@@ -24,7 +24,4 @@ def repotree(request, tmpdir):
         release_file.write('some Release metadata for %s' % distro)
         release_file.close()
 
-    def fin():
-        shutil.rmtree(top_dir)
-    request.addfinalizer(fin)
     return top_dir
