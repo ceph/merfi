@@ -1,21 +1,22 @@
 from mock import call, patch
-import pytest
 from merfi.backends import rpm_sign
 from merfi.tests.backends.base import BaseBackendTest
 from tambo import Transport
 
+
 class TestRpmSign(BaseBackendTest):
 
-    backend = rpm_sign.RpmSign([])
-    # fake command-line args
-    argv = ['merfi', '--key', 'mykey']
-    backend.parser = Transport(argv, options=backend.options)
-    backend.parser.parse_args()
+    def setup(self):
+        self.backend = rpm_sign.RpmSign([])
+        # fake command-line args
+        self.argv = ['merfi', '--key', 'mykey']
+        self.backend.parser = Transport(self.argv, options=self.backend.options)
+        self.backend.parser.parse_args()
 
-    # args to merfi.backends.rpm_sign.util's run()
-    detached = ['rpm-sign', '--key', 'mykey', '--detachsign', 'Release', '--output', 'Release.gpg']
-    # args to merfi.backends.rpm_sign.util's run_output()
-    clearsign = ['rpm-sign', '--key', 'mykey', '--clearsign', 'Release']
+        # args to merfi.backends.rpm_sign.util's run()
+        self.detached = ['rpm-sign', '--key', 'mykey', '--detachsign', 'Release', '--output', 'Release.gpg']
+        # args to merfi.backends.rpm_sign.util's run_output()
+        self.clearsign = ['rpm-sign', '--key', 'mykey', '--clearsign', 'Release']
 
     @patch('merfi.backends.rpm_sign.util')
     def test_sign_no_files(self, m_util, tmpdir):
