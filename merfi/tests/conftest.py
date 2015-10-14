@@ -1,7 +1,6 @@
 import os
 import pytest
 import shutil
-import tempfile
 
 # TODO: Enhance this fixture so that we distinguish between the "Release"
 # files that need to be signed and the ones that do not.
@@ -10,9 +9,9 @@ import tempfile
 #     signed.
 # See https://github.com/alfredodeza/merfi/issues/6
 @pytest.fixture(scope="module")
-def repotree(request):
+def repotree(request, tmpdir):
     # Create a basic skeleton repository with "Release" files to sign.
-    top_dir = tempfile.mkdtemp(suffix='.merfi')
+    top_dir = str(tmpdir)
     # Top directories:
     os.mkdir(os.path.join(top_dir, 'db'))
     os.mkdir(os.path.join(top_dir, 'dists'))
