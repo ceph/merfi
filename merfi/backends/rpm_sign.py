@@ -30,18 +30,20 @@ Positional Arguments:
     name = 'rpm-sign'
     options = ['--key']
 
-    def clear_sign(self, path):
+    def clear_sign(self, path, command):
         """
         When doing a "clearsign" with rpm-sign, the output goes to stdout, so
         that needs to be captured and written to the default output file for
         clear signed signatures (InRelease).
         """
-        clearsign = ['rpm-sign', '--key', self.key, '--clearsign', 'Release']
         logger.info('signing: %s' % path)
-        out, err, code = util.run_output(clearsign)
+        out, err, code = util.run_output(command)
         absolute_directory = os.path.dirname(os.path.abspath(path))
         with open(os.path.join(absolute_directory, 'InRelease'), 'w') as f:
             f.write(out)
+
+    def detached(self, command):
+        return util.run(command)
 
     def sign(self):
         logger.info('Starting path collection, looking for files to sign')
@@ -61,7 +63,7 @@ Positional Arguments:
             logger.warning('No paths found that matched')
 
         for path in paths:
-            if merfi.config['check']:
+            if merfi.config.get('check'):
                 new_gpg_path = path.split('Release')[0]+'Release.gpg'
                 new_in_path = path.split('Release')[0]+'InRelease'
                 logger.info('[CHECKMODE] signing: %s' % path)
@@ -70,6 +72,7 @@ Positional Arguments:
             else:
                 os.chdir(os.path.dirname(path))
                 detached = ['rpm-sign', '--key', self.key, '--detachsign', 'Release', '--output', 'Release.gpg']
+                clearsign = ['rpm-sign', '--key', self.key, '--clearsign', 'Release']
                 logger.info('signing: %s' % path)
-                util.run(detached)
-                self.clear_sign(path)
+                self.detached(detached)
+                self.clear_sign(path, clearsign)
