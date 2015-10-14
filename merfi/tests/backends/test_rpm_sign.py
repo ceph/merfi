@@ -66,5 +66,5 @@ class TestRpmClearSign(RpmSign):
         self.sign(repotree)
         first_path = self.backend.clear_sign.calls[0][0][0]
         second_path = self.backend.clear_sign.calls[1][0][0]
-        assert first_path.endswith('/dists/precise/Release')
-        assert second_path.endswith('/dists/trusty/Release')
+        assert first_path.endswith('/Release')
+        assert second_path.endswith('/Release')
