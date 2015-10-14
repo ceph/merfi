@@ -42,14 +42,29 @@ class TestRpmSign(RpmSign):
         assert len(self.backend.detached.calls) == 2
         assert len(self.backend.clear_sign.calls) == 2
 
-    def test_sign_two_files_detached_args(self, repotree):
+    def test_sign_two_files_path(self, repotree):
         self.sign(repotree)
         assert self.backend.detached.calls[0][0][0] == self.detached
         assert self.backend.detached.calls[1][0][0] == self.detached
 
-    def test_sign_two_files_clear_sign_args(self, repotree):
+    def test_sign_two_files_command(self, repotree):
+        self.sign(repotree)
+        assert self.backend.detached.calls[0][0][0] == self.detached
+        assert self.backend.detached.calls[1][0][0] == self.detached
+
+
+class TestRpmClearSign(RpmSign):
+
+    def test_sign_two_files_command(self, repotree):
         self.sign(repotree)
         # first call, second argument (the command to run)
         assert self.backend.clear_sign.calls[0][0][1] == self.clearsign
         # second call, second argument (the command to run)
         assert self.backend.clear_sign.calls[1][0][1] == self.clearsign
+
+    def test_sign_two_files_path(self, repotree):
+        self.sign(repotree)
+        first_path = self.backend.clear_sign.calls[0][0][0]
+        second_path = self.backend.clear_sign.calls[1][0][0]
+        assert first_path.endswith('/dists/precise/Release')
+        assert second_path.endswith('/dists/trusty/Release')
