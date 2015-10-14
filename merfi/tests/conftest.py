@@ -8,7 +8,7 @@ import shutil
 #   - Write a line "SHA256:" into the correct "Releases" file that *should* be
 #     signed.
 # See https://github.com/alfredodeza/merfi/issues/6
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def repotree(request, tmpdir):
     # Create a basic skeleton repository with "Release" files to sign.
     top_dir = str(tmpdir)
