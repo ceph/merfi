@@ -47,6 +47,8 @@ Positional Arguments:
         logger.info('Starting path collection, looking for files to sign')
         self.keyfile = self.parser.get('--keyfile', 'Release.gpg')
         self.key = self.parser.get('--key')
+        if not self.key:
+            raise RuntimeError('specify a --key for signing')
         paths = FileCollector(self.path)
 
         if paths:
