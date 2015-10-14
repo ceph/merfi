@@ -1,6 +1,4 @@
-from mock import call, patch
 from merfi.backends import rpm_sign
-from merfi.tests.backends.base import BaseBackendTest
 from merfi.tests.util import CallRecorder
 from tambo import Transport
 
