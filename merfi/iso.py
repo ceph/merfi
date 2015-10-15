@@ -14,14 +14,14 @@ source directory has proper read permissions).
 
 Default behavior will perform these actions on a source directory::
 
-    genisoimage -r -o isofile {source directory}
-    sha256sum isofile > isofile.SHA256SUM
+    genisoimage -r -o sourcedir-dvd.iso {source directory}
+    sha256sum sourcedir-dvd.iso > sourcedir-dvd.iso.SHA256SUM
 
 %s
 
 Options:
 
--o, --output      Custom filename output (defaults to 'isofile').
+-o, --output      Custom filename output (defaults to '<sourcedir>-dvd.iso').
 
 Positional Arguments:
 
@@ -38,8 +38,8 @@ Positional Arguments:
         parser = Transport(argv, options=options)
         parser.catch_help = self.help()
         parser.parse_args()
-        self.output = parser.get('--output', 'isofile')
         self.source = util.infer_path(parser.unknown_commands)
+        self.output = parser.get('--output', self.source + '-dvd.iso')
         self.check_dependency()
         self.make_iso()
         self.make_sha256sum()
