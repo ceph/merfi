@@ -30,9 +30,12 @@ Positional Arguments:
     executable = 'genisoimage'
     name = 'iso'
 
-    def parse_args(self):
+    def parse_args(self, argv=None):
+        """ pass argv during testing """
+        if argv is None:
+            argv = self.argv
         options = [['--output', '-o']]
-        parser = Transport(self.argv, options=options)
+        parser = Transport(argv, options=options)
         parser.catch_help = self.help()
         parser.parse_args()
         self.output = parser.get('--output', 'isofile')
