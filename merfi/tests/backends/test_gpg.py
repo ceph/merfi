@@ -1,9 +1,8 @@
 from mock import call, patch
 import pytest
 from merfi.backends import gpg
-from merfi.tests.backends.base import BaseBackendTest
 
-class TestGpg(BaseBackendTest):
+class TestGpg(object):
 
     backend = gpg.Gpg([])
 
@@ -13,12 +12,14 @@ class TestGpg(BaseBackendTest):
 
     @patch("merfi.backends.gpg.util")
     def test_sign_no_files(self, m_util, tmpdir):
-        super(TestGpg, self).test_sign_no_files(m_util, tmpdir)
+        self.backend.path = str(tmpdir)
+        self.backend.sign()
         assert not m_util.run.called
 
     @patch("merfi.backends.gpg.util")
     def test_sign_two_files(self, m_util, repotree):
-        super(TestGpg, self).test_sign_two_files(m_util, repotree)
+        self.backend.path = repotree
+        self.backend.sign()
         # Our repotree fixture has two "Release" files.
         # Each one gets detached-signed and clearsign'd.
         calls = [
