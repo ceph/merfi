@@ -15,6 +15,20 @@ class TestIso(object):
         iso.make_sha256sum()
         return iso
 
+    def create_real_iso(self, output_dir):
+        """ Create a "real" ISO file, using make_iso() (ie genisoimage) """
+        # simple contents
+        compose_dir = output_dir.mkdir('my-test-contents')
+        f = compose_dir.join('contents.txt')
+        f.write('This text file will be on our ISO')
+
+        iso = Iso([])
+        argv = ['merfi', str(output_dir.join('my-test-contents'))]
+        iso.parse_args(argv)
+        iso.make_iso()
+        iso.make_sha256sum()
+        return iso
+
     def test_sha256sum_contents(self, tmpdir):
         iso = self.create_fake_iso(tmpdir)
         with open(iso.output_checksum, 'r') as chsumf:
@@ -29,3 +43,8 @@ class TestIso(object):
         iso = self.create_fake_iso(tmpdir)
         os.chdir(os.path.dirname(iso.output_checksum))
         assert subprocess.call(['sha256sum', '-c', iso.output_checksum]) == 0
+
+    @pytest.mark.skipif(which('genisoimage') is None, reason='genisoimage is not installed')
+    def test_make_iso(self, tmpdir):
+        iso = self.create_real_iso(tmpdir)
+        assert os.path.isfile(str(tmpdir.join('my-test-contents-dvd.iso')))
