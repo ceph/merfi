@@ -41,7 +41,7 @@ Positional Arguments:
             logger.warning('No paths found that matched')
 
         for path in paths:
-            if merfi.config['check']:
+            if merfi.config.get('check'):
                 new_gpg_path = path.split('Release')[0]+'Release.gpg'
                 new_in_path = path.split('Release')[0]+'InRelease'
                 logger.info('[CHECKMODE] signing: %s' % path)
