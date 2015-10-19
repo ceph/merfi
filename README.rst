@@ -26,6 +26,15 @@ What is really doing behind the scenes is using ``rpm-sign`` like this::
     rpm-sign --key "mykey" --detachsign Release --output Release.gpg
     rpm-sign --key "mykey" --clearsign Release > InRelease
 
+You can also specify a ``--keyfile`` argument to ``rpm-sign``. This will cause
+merfi to copy this GPG public key as ``release.asc`` to the root of each
+repository::
+
+    $ merfi rpm-sign --key "mykey" --keyfile /etc/RPM-GPG-KEY-testing /opt/packages
+
+This feature is designed for Ceph's ISO installer (ice-setup), because it
+expects the GPG public key to be present in this location.
+
 gpg
 ---
 GPG support is similar to ``rpm-sign`` in that merfi will crawl a path

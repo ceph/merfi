@@ -1,4 +1,5 @@
 import os
+import shutil
 from tambo import Transport
 import merfi
 from merfi import logger
@@ -83,3 +84,14 @@ Positional Arguments:
                 logger.info('signing: %s' % path)
                 self.detached(detached)
                 self.clear_sign(path, clearsign)
+
+        if self.keyfile:
+            logger.info('using keyfile "%s" as release.asc' % self.keyfile)
+            for repo in repos:
+                logger.info('placing release.asc in %s' % repo)
+                if merfi.config.get('check'):
+                    logger.info('[CHECKMODE] writing release.asc')
+                else:
+                    shutil.copyfile(
+                        self.keyfile,
+                        os.path.join(repo, 'release.asc'))
