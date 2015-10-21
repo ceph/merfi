@@ -47,13 +47,13 @@ Positional Arguments:
         return util.run(command)
 
     def sign(self):
-        logger.info('Starting path collection, looking for files to sign')
         self.keyfile = self.parser.get('--keyfile')
         if self.keyfile and not os.path.isfile(self.keyfile):
             raise RuntimeError('%s is not a file' % self.keyfile)
         self.key = self.parser.get('--key')
         if not self.key:
             raise RuntimeError('specify a --key for signing')
+        logger.info('Starting path collection, looking for files to sign')
         repos = RepoCollector(self.path)
         paths = []
         for repo in repos:
