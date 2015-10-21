@@ -1,6 +1,5 @@
 import os
 from tambo import Transport
-from merfi.collector import FileCollector
 import merfi
 from merfi import logger
 from merfi import util
