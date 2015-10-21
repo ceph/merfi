@@ -8,8 +8,6 @@ class FileCollector(list):
 
     def __init__(self, path=None, config=None, _eager=True):
         config = config or merfi.config
-        self.user_match = config.get('filename')
-        self.case_insensitive = config.get('ignorecase')
         self.path = self._abspath(path or '.')
         # making it easier to test
         if _eager:
@@ -19,19 +17,6 @@ class FileCollector(list):
         if not path.startswith('/'):
             return os.path.abspath(path)
         return path
-
-    @property
-    def valid_name(self):
-        fallback = re.compile(r'Release$')
-        if not self.user_match:
-            return fallback
-        else:
-            try:
-                if self.case_insensitive:
-                    return re.compile(self.user_match, re.IGNORECASE)
-                return re.compile(self.user_match)
-            except Exception, msg:
-                raise SystemExit('Could not compile regex, error was: %s' % msg)
 
     def _collect(self):
         if os.path.isfile(self.path):
@@ -43,9 +28,10 @@ class FileCollector(list):
         join = os.path.join
         path = self.path
 
+        valid_name = re.compile(r'Release$')
         for root, dirs, files in walk(path):
             for item in files:
                 absolute_path = join(root, item)
-                if not self.valid_name.match(item):
+                if not valid_name.match(item):
                     continue
                 self.append(absolute_path)

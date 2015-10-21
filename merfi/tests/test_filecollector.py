@@ -21,15 +21,3 @@ class TestFileCollector(object):
 
     def test_path_is_not_absolute(self):
         assert self.paths._abspath('directory').startswith('/')
-
-    def test_valid_name_fallsback(self):
-        assert self.paths.valid_name.pattern == 'Release$'
-
-    def test_valid_name_usermatch(self):
-        self.paths.user_match = 'myfile'
-        assert self.paths.valid_name.pattern == 'myfile'
-
-    def test_invalid_regex(self):
-        self.paths.user_match = 1
-        with pytest.raises(SystemExit):
-            self.paths.valid_name
