@@ -1,5 +1,5 @@
 import os
-from merfi.collector import FileCollector
+from merfi.collector import RepoCollector
 import merfi
 from merfi import logger, util
 from merfi.backends import base
@@ -30,7 +30,12 @@ Positional Arguments:
 
     def sign(self):
         logger.info('Starting path collection, looking for files to sign')
-        paths = FileCollector(path=self.path)
+        repos = RepoCollector(self.path)
+        paths = []
+        for repo in repos:
+            repo_paths = RepoCollector.debian_release_files(repo)
+            paths.extend(repo_paths)
+
         if paths:
             logger.info('%s matching paths found' % len(paths))
             # FIXME: this should spit the actual verified command
