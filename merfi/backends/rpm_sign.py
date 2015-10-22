@@ -1,9 +1,10 @@
 import os
+import shutil
 from tambo import Transport
 import merfi
 from merfi import logger
 from merfi import util
-from merfi.collector import FileCollector
+from merfi.collector import RepoCollector
 from merfi.backends import base
 
 
@@ -18,8 +19,9 @@ default)
 Options
 
 --key         Name of the key to use (see rpm-sign --list-keys)
---keyfile     Full path location of the keyfile, defaults to
+--keyfile     Full path location of the public keyfile, for example
               /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+              or /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta
 
 Positional Arguments:
 
@@ -28,7 +30,7 @@ Positional Arguments:
     """
     executable = 'rpm-sign'
     name = 'rpm-sign'
-    options = ['--key']
+    options = ['--key', '--keyfile']
 
     def clear_sign(self, path, command):
         """
@@ -46,12 +48,18 @@ Positional Arguments:
         return util.run(command)
 
     def sign(self):
-        logger.info('Starting path collection, looking for files to sign')
-        self.keyfile = self.parser.get('--keyfile', 'Release.gpg')
+        self.keyfile = self.parser.get('--keyfile')
+        if self.keyfile and not os.path.isfile(self.keyfile):
+            raise RuntimeError('%s is not a file' % self.keyfile)
         self.key = self.parser.get('--key')
         if not self.key:
             raise RuntimeError('specify a --key for signing')
-        paths = FileCollector(self.path)
+        logger.info('Starting path collection, looking for files to sign')
+        repos = RepoCollector(self.path)
+        paths = []
+        for repo in repos:
+            repo_paths = RepoCollector.debian_release_files(repo)
+            paths.extend(repo_paths)
 
         if paths:
             logger.info('%s matching paths found' % len(paths))
@@ -76,3 +84,14 @@ Positional Arguments:
                 logger.info('signing: %s' % path)
                 self.detached(detached)
                 self.clear_sign(path, clearsign)
+
+        if self.keyfile:
+            logger.info('using keyfile "%s" as release.asc' % self.keyfile)
+            for repo in repos:
+                logger.info('placing release.asc in %s' % repo)
+                if merfi.config.get('check'):
+                    logger.info('[CHECKMODE] writing release.asc')
+                else:
+                    shutil.copyfile(
+                        self.keyfile,
+                        os.path.join(repo, 'release.asc'))

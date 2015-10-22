@@ -1,7 +1,6 @@
 from hashlib import sha256
 import os
 from tambo import Transport
-from merfi.collector import FileCollector
 import merfi
 from merfi import logger, util, base
 

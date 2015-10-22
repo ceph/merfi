@@ -1,7 +1,16 @@
 from merfi.backends import rpm_sign
 from merfi.tests.util import CallRecorder
+from filecmp import cmp
+import os
+import pytest
 from tambo import Transport
 
+@pytest.fixture
+def rpmsign(request):
+    backend = rpm_sign.RpmSign([])
+    backend.detached = CallRecorder()
+    backend.clear_sign = CallRecorder()
+    return backend
 
 class RpmSign(object):
 
@@ -68,3 +77,20 @@ class TestRpmClearSign(RpmSign):
         second_path = self.backend.clear_sign.calls[1][0][0]
         assert first_path.endswith('/Release')
         assert second_path.endswith('/Release')
+
+class TestRpmSignKeyfile(RpmSign):
+
+    def test_keyfile_path(self, repotree, rpmsign, tmpdir):
+        backend = rpmsign
+        # fake keyfile
+        keyfile = tmpdir.join('RPM-GPG-KEY-testing')
+        keyfile.write('-----BEGIN PGP PUBLIC KEY BLOCK-----')
+        # fake command-line args
+        argv = ['merfi', '--key', 'mykey', '--keyfile', str(keyfile)]
+        backend.parser = Transport(argv, options=backend.options)
+        backend.parser.parse_args()
+        backend.path = repotree
+        backend.sign()
+
+        release_key = os.path.join(repotree, 'release.asc')
+        assert cmp(str(keyfile), release_key)
