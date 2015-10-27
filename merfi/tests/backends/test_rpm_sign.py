@@ -94,3 +94,21 @@ class TestRpmSignKeyfile(RpmSign):
 
         release_key = os.path.join(repotree, 'release.asc')
         assert cmp(str(keyfile), release_key)
+
+class TestRpmSignNat(RpmSign):
+
+    def test_keyfile_path(self, repotree, rpmsign):
+        backend = rpmsign
+        # fake command-line args
+        argv = ['merfi', '--key', 'mykey', '--nat']
+        backend.parser = Transport(argv, options=backend.options)
+        backend.parser.parse_args()
+        backend.path = repotree
+        backend.sign()
+
+        clearsign = ['rpm-sign', '--nat', '--key', 'mykey', '--clearsign', 'Release']
+
+        # first call, second argument (the command to run)
+        assert backend.clear_sign.calls[0][0][1] == clearsign
+        # second call, second argument (the command to run)
+        assert backend.clear_sign.calls[1][0][1] == clearsign
