@@ -35,6 +35,11 @@ repository::
 This feature is designed for Ceph's ISO installer (ice-setup), because it
 expects the GPG public key to be present in this location.
 
+If you are running the ``rpm-sign`` command  on a computer that is behind a
+NAT, you must pass the ``--nat`` argument, like so::
+
+    $ merfi rpm-sign --nat --key "mykey"
+
 gpg
 ---
 GPG support is similar to ``rpm-sign`` in that merfi will crawl a path

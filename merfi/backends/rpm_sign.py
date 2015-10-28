@@ -22,6 +22,7 @@ Options
 --keyfile     Full path location of the public keyfile, for example
               /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
               or /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta
+--nat         A NAT is between this system and the signing server.
 
 Positional Arguments:
 
@@ -30,7 +31,7 @@ Positional Arguments:
     """
     executable = 'rpm-sign'
     name = 'rpm-sign'
-    options = ['--key', '--keyfile']
+    options = ['--key', '--keyfile', '--nat']
 
     def clear_sign(self, path, command):
         """
@@ -81,6 +82,9 @@ Positional Arguments:
                 os.chdir(os.path.dirname(path))
                 detached = ['rpm-sign', '--key', self.key, '--detachsign', 'Release', '--output', 'Release.gpg']
                 clearsign = ['rpm-sign', '--key', self.key, '--clearsign', 'Release']
+                if self.parser.has('--nat'):
+                    detached.insert( 1, '--nat')
+                    clearsign.insert( 1, '--nat')
                 logger.info('signing: %s' % path)
                 self.detached(detached)
                 self.clear_sign(path, clearsign)
