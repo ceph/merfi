@@ -25,3 +25,25 @@ def repotree(request, tmpdir):
         release_file.close()
 
     return top_dir
+
+
+@pytest.fixture(scope="function")
+def nested_repotree(request, tmpdir):
+    # Create a basic skeleton repository with "Release" files to sign.
+    directory = str(tmpdir)
+    os.makedirs(os.path.join(directory, 'nested'))
+    top_dir = os.path.join(directory, 'nested')
+    # Top directories:
+    os.mkdir(os.path.join(top_dir, 'db'))
+    os.mkdir(os.path.join(top_dir, 'dists'))
+    os.mkdir(os.path.join(top_dir, 'pool'))
+    # Distro "Release" files:
+    for distro in ['precise', 'trusty']:
+        distro_dir = os.path.join(top_dir, 'dists', distro)
+        os.mkdir(distro_dir)
+        release_file = open(os.path.join(distro_dir, 'Release'), 'w')
+        release_file.write('some Release metadata for %s' % distro)
+        release_file.close()
+
+    return top_dir
+
