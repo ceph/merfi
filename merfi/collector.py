@@ -32,15 +32,12 @@ class RepoCollector(list):
 
         # Local is faster
         walk = os.walk
-        join = os.path.join
         path = self.path
 
         for root, dirs, files in walk(path):
-            for item in dirs:
-                absolute_path = join(root, item)
-                if not self.is_debian_repo(item):
-                    continue
-                self.append(absolute_path)
+            if self.is_debian_repo(root):
+                self.append(root)
+                continue
 
     def is_debian_repo(self, directory):
         """ Is 'directory' a Debian repository ? """
@@ -53,8 +50,8 @@ class RepoCollector(list):
             return False
         return True
 
-    @staticmethod
-    def debian_release_files(repo):
+    @property
+    def debian_release_files(self):
         """ Find all the "Release" files to be signed within a Debian repo """
         result = []
 
@@ -63,12 +60,10 @@ class RepoCollector(list):
         join = os.path.join
         isfile = os.path.isfile
 
-        dists = join(repo, 'dists')
-
-        # Examine all immediate subdirectories in "dists":
-        root, dirs, files = next(walk(dists))
-        for dist in dirs:
-            release_file = join(root, dist, 'Release')
-            if isfile(release_file):
-                result.append(release_file)
+        for repo_path in self:
+            for root, dirs, files in walk(repo_path):
+                for dist in dirs:
+                    release_file = join(root, dist, 'Release')
+                    if isfile(release_file):
+                        result.append(release_file)
         return result
