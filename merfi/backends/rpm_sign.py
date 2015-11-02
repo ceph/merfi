@@ -57,10 +57,7 @@ Positional Arguments:
             raise RuntimeError('specify a --key for signing')
         logger.info('Starting path collection, looking for files to sign')
         repos = RepoCollector(self.path)
-        paths = []
-        for repo in repos:
-            repo_paths = RepoCollector.debian_release_files(repo)
-            paths.extend(repo_paths)
+        paths = repos.debian_release_files
 
         if paths:
             logger.info('%s matching paths found' % len(paths))
