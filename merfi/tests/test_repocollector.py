@@ -1,5 +1,5 @@
 from merfi.collector import RepoCollector
-from os.path import join
+from os.path import join, dirname
 
 
 class TestRepoCollector(object):
@@ -27,3 +27,13 @@ class TestRepoCollector(object):
             join(repotree, 'dists', 'precise', 'Release'),
         ]
         assert set(paths) == set(expected)
+
+    def test_debian_nested_release_files(self, repotree):
+        path = dirname(repotree)
+        paths = RepoCollector(path)
+        release_files = paths.debian_release_files
+        expected = [
+            join(repotree, 'dists', 'trusty', 'Release'),
+            join(repotree, 'dists', 'precise', 'Release'),
+        ]
+        assert set(release_files) == set(expected)
