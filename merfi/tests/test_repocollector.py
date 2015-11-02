@@ -20,20 +20,22 @@ class TestRepoCollector(object):
         assert self.paths._abspath('directory').startswith('/')
 
     def test_debian_release_files(self, repotree):
-        paths = RepoCollector.debian_release_files(repotree)
+        paths = RepoCollector(repotree)
+        release_files = paths.debian_release_files
         # The root of the repotree fixture is itself a repository.
         expected = [
             join(repotree, 'dists', 'trusty', 'Release'),
             join(repotree, 'dists', 'precise', 'Release'),
         ]
-        assert set(paths) == set(expected)
+        assert set(release_files) == set(expected)
 
-    def test_debian_nested_release_files(self, repotree):
-        path = dirname(repotree)
+    def test_debian_nested_release_files(self, nested_repotree):
+        # go one level up
+        path = dirname(nested_repotree)
         paths = RepoCollector(path)
         release_files = paths.debian_release_files
         expected = [
-            join(repotree, 'dists', 'trusty', 'Release'),
-            join(repotree, 'dists', 'precise', 'Release'),
+            join(nested_repotree, 'dists', 'trusty', 'Release'),
+            join(nested_repotree, 'dists', 'precise', 'Release'),
         ]
         assert set(release_files) == set(expected)
