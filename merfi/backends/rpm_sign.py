@@ -57,10 +57,10 @@ Positional Arguments:
             raise RuntimeError('specify a --key for signing')
         logger.info('Starting path collection, looking for files to sign')
         repos = RepoCollector(self.path)
-        paths = repos.debian_release_files
+        deb_paths = repos.debian_release_files
 
-        if paths:
-            logger.info('%s matching paths found' % len(paths))
+        if deb_paths:
+            logger.info('%s matching paths found' % len(deb_paths))
             # FIXME: this should spit the actual verified command
             logger.info('will sign with the following commands:')
             logger.info('rpm-sign --key "%s" --detachsign Release --output Release.gpg' % self.key)
@@ -68,7 +68,7 @@ Positional Arguments:
         else:
             logger.warning('No paths found that matched')
 
-        for path in paths:
+        for path in deb_paths:
             if merfi.config.get('check'):
                 new_gpg_path = path.split('Release')[0]+'Release.gpg'
                 new_in_path = path.split('Release')[0]+'InRelease'
