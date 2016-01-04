@@ -73,6 +73,24 @@ class RepoCollector(list):
         return result
 
     @property
+    def rpm_repomd_files(self):
+        """ Find all the "repomd.xml" files to be signed within a RPM repo """
+        result = []
+
+        # Local is faster
+        walk = os.walk
+        join = os.path.join
+        isfile = os.path.isfile
+
+        for repo_path in self:
+            for root, dirs, files in walk(repo_path):
+                for dist in dirs:
+                    repomd_file = join(root, 'repodata', 'repomd.xml')
+                    if isfile(repomd_file):
+                        result.append(repomd_file)
+        return result
+
+    @property
     def rpm_files(self):
         """ Find all the .rpm files to be signed """
         result = []

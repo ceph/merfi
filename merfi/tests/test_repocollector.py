@@ -49,3 +49,13 @@ class TestRepoCollector(object):
             join(rpm_repotree, 'el7', 'test.el7.rpm'),
         ]
         assert set(rpm_files) == set(expected)
+
+    def test_repomd_files(self, rpm_repotree):
+        paths = RepoCollector(rpm_repotree)
+        repomd_files = paths.rpm_repomd_files
+        # The repotree fixture contains two repositories.
+        expected = [
+            join(rpm_repotree, 'el6', 'repodata', 'repomd.xml'),
+            join(rpm_repotree, 'el7', 'repodata', 'repomd.xml'),
+        ]
+        assert set(repomd_files) == set(expected)
