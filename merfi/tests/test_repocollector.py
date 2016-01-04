@@ -39,3 +39,13 @@ class TestRepoCollector(object):
             join(nested_deb_repotree, 'dists', 'precise', 'Release'),
         ]
         assert set(release_files) == set(expected)
+
+    def test_rpm_files(self, rpm_repotree):
+        paths = RepoCollector(rpm_repotree)
+        rpm_files = paths.rpm_files
+        # The repotree fixture contains two repositories, one package in each.
+        expected = [
+            join(rpm_repotree, 'el6', 'test.el6.rpm'),
+            join(rpm_repotree, 'el7', 'test.el7.rpm'),
+        ]
+        assert set(rpm_files) == set(expected)
