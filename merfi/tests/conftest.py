@@ -2,6 +2,10 @@ import os
 import pytest
 import shutil
 
+TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
+FIXTURES_DIR = os.path.join(TESTS_DIR, 'fixtures')
+
+
 # TODO: Enhance this fixture so that we distinguish between the "Release"
 # files that need to be signed and the ones that do not.
 #   - Create more bogus "Releases" files that don't need to be signed.
@@ -47,3 +51,11 @@ def nested_deb_repotree(request, tmpdir):
 
     return top_dir
 
+
+@pytest.fixture(scope="function")
+def rpm_repotree(request, tmpdir):
+    """ Create a basic set of repositories with .rpm files to sign. """
+    rpmrepos = os.path.join(FIXTURES_DIR, 'rpmrepos')
+    shutil.rmtree(str(tmpdir))
+    shutil.copytree(rpmrepos, str(tmpdir))
+    return tmpdir

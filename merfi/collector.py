@@ -1,6 +1,7 @@
 from __future__ import with_statement
 import os
 import merfi
+import fnmatch
 
 
 class RepoCollector(list):
@@ -34,7 +35,7 @@ class RepoCollector(list):
         path = self.path
 
         for root, dirs, files in walk(path):
-            if self.is_debian_repo(root):
+            if self.is_debian_repo(root) or self.is_rpm_repo(root):
                 self.append(root)
                 continue
 
@@ -48,6 +49,10 @@ class RepoCollector(list):
         if not isdir(join(directory, 'pool')):
             return False
         return True
+
+    def is_rpm_repo(self, directory):
+        """ Is 'directory' an RPM repository ? """
+        return os.path.isdir(os.path.join(directory, 'repodata'))
 
     @property
     def debian_release_files(self):
@@ -65,4 +70,19 @@ class RepoCollector(list):
                     release_file = join(root, dist, 'Release')
                     if isfile(release_file):
                         result.append(release_file)
+        return result
+
+    @property
+    def rpm_files(self):
+        """ Find all the .rpm files to be signed """
+        result = []
+
+        # Local is faster
+        walk = os.walk
+        join = os.path.join
+
+        for repo_path in self:
+            for root, dirs, files in walk(repo_path):
+                for filename in fnmatch.filter(files, '*.rpm'):
+                    result.append(join(root, filename))
         return result
