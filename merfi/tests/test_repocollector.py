@@ -52,3 +52,15 @@ class TestRepoCollector(object):
             str(rpm_repotree / 'luminous' / 'el7' / 'test.el7.rpm'),
         ]
         assert set(rpm_files) == set(expected)
+
+    def test_repomd_files(self, rpm_repotree):
+        paths = RepoCollector(str(rpm_repotree))
+        repomd_files = paths.rpm_repomd_files
+        # The repotree fixture contains two repositories.
+        expected = [
+            str(rpm_repotree / 'jewel' / 'el6' / 'repodata' / 'repomd.xml'),
+            str(rpm_repotree / 'jewel' / 'el7' / 'repodata' / 'repomd.xml'),
+            str(rpm_repotree / 'luminous' / 'el6' / 'repodata' / 'repomd.xml'),
+            str(rpm_repotree / 'luminous' / 'el7' / 'repodata' / 'repomd.xml'),
+        ]
+        assert set(repomd_files) == set(expected)
