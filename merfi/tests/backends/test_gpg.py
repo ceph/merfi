@@ -17,10 +17,10 @@ class TestGpg(object):
         assert not m_util.run.called
 
     @patch("merfi.backends.gpg.util")
-    def test_sign_two_files(self, m_util, repotree):
-        self.backend.path = repotree
+    def test_sign_two_files(self, m_util, deb_repotree):
+        self.backend.path = deb_repotree
         self.backend.sign()
-        # Our repotree fixture has two "Release" files.
+        # Our deb_repotree fixture has two "Release" files.
         # Each one gets detached-signed and clearsign'd.
         calls = [
             call(self.detached),

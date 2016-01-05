@@ -9,7 +9,7 @@ import shutil
 #     signed.
 # See https://github.com/alfredodeza/merfi/issues/6
 @pytest.fixture(scope="function")
-def repotree(request, tmpdir):
+def deb_repotree(request, tmpdir):
     # Create a basic skeleton repository with "Release" files to sign.
     top_dir = str(tmpdir)
     # Top directories:
@@ -28,7 +28,7 @@ def repotree(request, tmpdir):
 
 
 @pytest.fixture(scope="function")
-def nested_repotree(request, tmpdir):
+def nested_deb_repotree(request, tmpdir):
     # Create a basic skeleton repository with "Release" files to sign.
     directory = str(tmpdir)
     os.makedirs(os.path.join(directory, 'nested'))

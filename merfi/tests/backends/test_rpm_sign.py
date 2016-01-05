@@ -46,33 +46,33 @@ class TestRpmSign(RpmSign):
         assert self.backend.detached.calls == []
         assert self.backend.clear_sign.calls == []
 
-    def test_sign_two_files_detached_and_clearsign(self, repotree):
-        self.sign(repotree)
+    def test_sign_two_files_detached_and_clearsign(self, deb_repotree):
+        self.sign(deb_repotree)
         assert len(self.backend.detached.calls) == 2
         assert len(self.backend.clear_sign.calls) == 2
 
-    def test_sign_two_files_path(self, repotree):
-        self.sign(repotree)
+    def test_sign_two_files_path(self, deb_repotree):
+        self.sign(deb_repotree)
         assert self.backend.detached.calls[0][0][0] == self.detached
         assert self.backend.detached.calls[1][0][0] == self.detached
 
-    def test_sign_two_files_command(self, repotree):
-        self.sign(repotree)
+    def test_sign_two_files_command(self, deb_repotree):
+        self.sign(deb_repotree)
         assert self.backend.detached.calls[0][0][0] == self.detached
         assert self.backend.detached.calls[1][0][0] == self.detached
 
 
 class TestRpmClearSign(RpmSign):
 
-    def test_sign_two_files_command(self, repotree):
-        self.sign(repotree)
+    def test_sign_two_files_command(self, deb_repotree):
+        self.sign(deb_repotree)
         # first call, second argument (the command to run)
         assert self.backend.clear_sign.calls[0][0][1] == self.clearsign
         # second call, second argument (the command to run)
         assert self.backend.clear_sign.calls[1][0][1] == self.clearsign
 
-    def test_sign_two_files_path(self, repotree):
-        self.sign(repotree)
+    def test_sign_two_files_path(self, deb_repotree):
+        self.sign(deb_repotree)
         first_path = self.backend.clear_sign.calls[0][0][0]
         second_path = self.backend.clear_sign.calls[1][0][0]
         assert first_path.endswith('/Release')
@@ -80,7 +80,7 @@ class TestRpmClearSign(RpmSign):
 
 class TestRpmSignKeyfile(RpmSign):
 
-    def test_keyfile_path(self, repotree, rpmsign, tmpdir):
+    def test_keyfile_path(self, deb_repotree, rpmsign, tmpdir):
         backend = rpmsign
         # fake keyfile
         keyfile = tmpdir.join('RPM-GPG-KEY-testing')
@@ -89,21 +89,21 @@ class TestRpmSignKeyfile(RpmSign):
         argv = ['merfi', '--key', 'mykey', '--keyfile', str(keyfile)]
         backend.parser = Transport(argv, options=backend.options)
         backend.parser.parse_args()
-        backend.path = repotree
+        backend.path = deb_repotree
         backend.sign()
 
-        release_key = os.path.join(repotree, 'release.asc')
+        release_key = os.path.join(deb_repotree, 'release.asc')
         assert cmp(str(keyfile), release_key)
 
 class TestRpmSignNat(RpmSign):
 
-    def test_keyfile_path(self, repotree, rpmsign):
+    def test_keyfile_path(self, deb_repotree, rpmsign):
         backend = rpmsign
         # fake command-line args
         argv = ['merfi', '--key', 'mykey', '--nat']
         backend.parser = Transport(argv, options=backend.options)
         backend.parser.parse_args()
-        backend.path = repotree
+        backend.path = deb_repotree
         backend.sign()
 
         clearsign = ['rpm-sign', '--nat', '--key', 'mykey', '--clearsign', 'Release']
