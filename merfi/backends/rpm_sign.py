@@ -45,6 +45,9 @@ Positional Arguments:
         with open(os.path.join(absolute_directory, 'InRelease'), 'w') as f:
             f.write(out)
 
+    def basic(self, command):
+        return util.run(command)
+
     def detached(self, command):
         return util.run(command)
 
@@ -58,6 +61,7 @@ Positional Arguments:
         logger.info('Starting path collection, looking for files to sign')
         repos = RepoCollector(self.path)
         deb_paths = repos.debian_release_files
+        rpm_paths = repos.rpm_files
 
         if deb_paths:
             logger.info('%d debian repositories found' % len(deb_paths))
@@ -85,6 +89,22 @@ Positional Arguments:
                 logger.info('signing: %s' % path)
                 self.detached(detached)
                 self.clear_sign(path, clearsign)
+
+        if rpm_paths:
+            logger.info('%d .rpm files found' % len(rpm_paths))
+        else:
+            logger.warning('No .rpm files found')
+
+        for path in rpm_paths:
+            if merfi.config.get('check'):
+                logger.info('[CHECKMODE] signing: %s' % path)
+            else:
+                os.chdir(os.path.dirname(path))
+                basic = ['rpm-sign', '--key', self.key, path ]
+                if self.parser.has('--nat'):
+                    basic.insert( 1, '--nat')
+                logger.info('signing: %s' % path)
+                self.basic(basic)
 
         if self.keyfile:
             logger.info('using keyfile "%s" as release.asc' % self.keyfile)
