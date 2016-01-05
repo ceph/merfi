@@ -60,13 +60,13 @@ Positional Arguments:
         deb_paths = repos.debian_release_files
 
         if deb_paths:
-            logger.info('%s matching paths found' % len(deb_paths))
+            logger.info('%d debian repositories found' % len(deb_paths))
             # FIXME: this should spit the actual verified command
             logger.info('will sign with the following commands:')
             logger.info('rpm-sign --key "%s" --detachsign Release --output Release.gpg' % self.key)
             logger.info('rpm-sign --key "%s" --clearsign Release --output InRelease' % self.key)
         else:
-            logger.warning('No paths found that matched')
+            logger.warning('No debian repositories found')
 
         for path in deb_paths:
             if merfi.config.get('check'):
