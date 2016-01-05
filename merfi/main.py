@@ -9,8 +9,8 @@ from merfi.decorators import catches
 
 class Merfi(object):
     _help = """
-merfi: A utility to find Release files and sign them with a given backend
-signature engine like rpm-sign or gpg.
+merfi: A utility to find package repositories and sign the metadata with a
+given backend signature engine like rpm-sign or gpg.
 
 Version: %s
 
