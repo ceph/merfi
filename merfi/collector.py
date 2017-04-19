@@ -19,8 +19,8 @@ class RepoCollector(list):
 
     def _collect(self):
         if os.path.isfile(self.path):
-            raise SystemExit('"%s" is a file. Please specify a directory.'
-                % self.path)
+            raise SystemExit('"%s" is a file. Please specify a directory.' %
+                             self.path)
 
         # Check whether our root (self.path) is itself a repo.
         if self.is_debian_repo(self.path):
