@@ -1,12 +1,10 @@
 from __future__ import with_statement
 import os
-import merfi
 
 
 class RepoCollector(list):
 
     def __init__(self, path=None, config=None, _eager=True):
-        config = config or merfi.config
         self.path = self._abspath(path or '.')
         # making it easier to test
         if _eager:
