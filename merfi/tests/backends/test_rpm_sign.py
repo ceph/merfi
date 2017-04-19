@@ -2,6 +2,7 @@ from merfi.backends import rpm_sign
 from merfi.tests.util import CallRecorder
 from filecmp import cmp
 import os
+from shutil import copytree
 import pytest
 from tambo import Transport
 
@@ -85,15 +86,17 @@ class TestRpmSignKeyfile(RpmSign):
         # fake keyfile
         keyfile = tmpdir.join('RPM-GPG-KEY-testing')
         keyfile.write('-----BEGIN PGP PUBLIC KEY BLOCK-----')
+        # Copy deb repo fixture to tmpdir for writing
+        copytree(deb_repotree, str(tmpdir.join('repo')))
         # fake command-line args
         argv = ['merfi', '--key', 'mykey', '--keyfile', str(keyfile)]
         backend.parser = Transport(argv, options=backend.options)
         backend.parser.parse_args()
-        backend.path = deb_repotree
+        backend.path = str(tmpdir.join('repo'))
         backend.sign()
 
-        release_key = os.path.join(deb_repotree, 'release.asc')
-        assert cmp(str(keyfile), release_key)
+        release_key = tmpdir.join('repo').join('release.asc')
+        assert cmp(str(keyfile), str(release_key))
 
 class TestRpmSignNat(RpmSign):
 
