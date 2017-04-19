@@ -25,7 +25,7 @@ class TestRepoCollector(object):
         # The root of the deb_repotree fixture is itself a repository.
         expected = [
             join(deb_repotree, 'dists', 'trusty', 'Release'),
-            join(deb_repotree, 'dists', 'precise', 'Release'),
+            join(deb_repotree, 'dists', 'xenial', 'Release'),
         ]
         assert set(release_files) == set(expected)
 
@@ -36,6 +36,6 @@ class TestRepoCollector(object):
         release_files = paths.debian_release_files
         expected = [
             join(nested_deb_repotree, 'dists', 'trusty', 'Release'),
-            join(nested_deb_repotree, 'dists', 'precise', 'Release'),
+            join(nested_deb_repotree, 'dists', 'xenial', 'Release'),
         ]
         assert set(release_files) == set(expected)
