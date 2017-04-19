@@ -11,7 +11,7 @@ class Gpg(base.BaseBackend):
 Signs files with gpg. Crawls a given path looking for 'Release' files (by
 default)
 
-Default behavior will perform these actions on 'Release' files::
+Default behavior will perform these actions on 'Release' files:
 
     gpg --armor --detach-sig --output Release.gpg Release
     gpg --clearsign --output InRelease Release
