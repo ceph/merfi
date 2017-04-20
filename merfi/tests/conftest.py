@@ -17,7 +17,7 @@ def deb_repotree(request, tmpdir):
     os.mkdir(os.path.join(top_dir, 'dists'))
     os.mkdir(os.path.join(top_dir, 'pool'))
     # Distro "Release" files:
-    for distro in ['precise', 'trusty']:
+    for distro in ['trusty', 'xenial']:
         distro_dir = os.path.join(top_dir, 'dists', distro)
         os.mkdir(distro_dir)
         release_file = open(os.path.join(distro_dir, 'Release'), 'w')
@@ -38,7 +38,7 @@ def nested_deb_repotree(request, tmpdir):
     os.mkdir(os.path.join(top_dir, 'dists'))
     os.mkdir(os.path.join(top_dir, 'pool'))
     # Distro "Release" files:
-    for distro in ['precise', 'trusty']:
+    for distro in ['trusty', 'xenial']:
         distro_dir = os.path.join(top_dir, 'dists', distro)
         os.mkdir(distro_dir)
         release_file = open(os.path.join(distro_dir, 'Release'), 'w')
