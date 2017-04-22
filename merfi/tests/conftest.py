@@ -47,3 +47,24 @@ def nested_deb_repotree(request, tmpdir):
 
     return top_dir
 
+@pytest.fixture(scope="function")
+def rpm_repotree(request, tmpdir):
+    """ Create a basic set of repositories with .rpm files to sign. """
+    top_dir = str(tmpdir)
+    # RPM files and repo metadata:
+    for distro in ['el6', 'el7']:
+        distro_dir = os.path.join(top_dir, distro)
+        os.mkdir(distro_dir)
+        # Dummy .rpm file:
+        rpm_filename = 'test.%s.rpm' % distro
+        rpm_file = open(os.path.join(distro_dir, rpm_filename), 'w')
+        rpm_file.write('some RPM content for %s' % distro)
+        rpm_file.close()
+        # Dummy Yum/DNF repository metadata:
+        os.mkdir(os.path.join(distro_dir, 'repodata'))
+        repomd_path = os.path.join(distro_dir, 'repodata', 'repomd.xml')
+        repomd_file = open(repomd_path, 'w')
+        repomd_file.write('<xml>some Yum/DNF data for %s</xml>' % distro)
+        repomd_file.close()
+
+    return top_dir

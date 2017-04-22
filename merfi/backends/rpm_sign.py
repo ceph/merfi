@@ -45,6 +45,9 @@ Positional Arguments:
         with open(os.path.join(absolute_directory, 'InRelease'), 'w') as f:
             f.write(out)
 
+    def basic(self, command):
+        return util.run(command)
+
     def detached(self, command):
         return util.run(command)
 
@@ -57,18 +60,19 @@ Positional Arguments:
             raise RuntimeError('specify a --key for signing')
         logger.info('Starting path collection, looking for files to sign')
         repos = RepoCollector(self.path)
-        paths = repos.debian_release_files
+        deb_paths = repos.debian_release_files
+        rpm_paths = repos.rpm_files
 
-        if paths:
-            logger.info('%s matching paths found' % len(paths))
+        if deb_paths:
+            logger.info('%d debian repositories found' % len(deb_paths))
             # FIXME: this should spit the actual verified command
             logger.info('will sign with the following commands:')
             logger.info('rpm-sign --key "%s" --detachsign Release --output Release.gpg' % self.key)
             logger.info('rpm-sign --key "%s" --clearsign Release --output InRelease' % self.key)
         else:
-            logger.warning('No paths found that matched')
+            logger.warning('No debian repositories found')
 
-        for path in paths:
+        for path in deb_paths:
             if merfi.config.get('check'):
                 new_gpg_path = path.split('Release')[0]+'Release.gpg'
                 new_in_path = path.split('Release')[0]+'InRelease'
@@ -85,6 +89,22 @@ Positional Arguments:
                 logger.info('signing: %s' % path)
                 self.detached(detached)
                 self.clear_sign(path, clearsign)
+
+        if rpm_paths:
+            logger.info('%d .rpm files found' % len(rpm_paths))
+        else:
+            logger.warning('No .rpm files found')
+
+        for path in rpm_paths:
+            if merfi.config.get('check'):
+                logger.info('[CHECKMODE] signing: %s' % path)
+            else:
+                os.chdir(os.path.dirname(path))
+                basic = ['rpm-sign', '--key', self.key, path ]
+                if self.parser.has('--nat'):
+                    basic.insert( 1, '--nat')
+                logger.info('signing: %s' % path)
+                self.basic(basic)
 
         if self.keyfile:
             logger.info('using keyfile "%s" as release.asc' % self.keyfile)
