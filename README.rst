@@ -32,7 +32,7 @@ repository::
 
     $ merfi rpm-sign --key "mykey" --keyfile /etc/RPM-GPG-KEY-testing /opt/packages
 
-This feature is designed for Ceph's ISO installer (ice-setup), because it
+This feature is designed for Ceph's ISO installer (ceph-ansible), because it
 expects the GPG public key to be present in this location.
 
 If you are running the ``rpm-sign`` command  on a computer that is behind a
