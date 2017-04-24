@@ -68,22 +68,7 @@ Positional Arguments:
             logger.warning('No paths found that matched')
 
         for path in paths:
-            if merfi.config.get('check'):
-                new_gpg_path = path.split('Release')[0]+'Release.gpg'
-                new_in_path = path.split('Release')[0]+'InRelease'
-                logger.info('[CHECKMODE] signing: %s' % path)
-                logger.info('[CHECKMODE] signed: %s' % new_gpg_path)
-                logger.info('[CHECKMODE] signed: %s' % new_in_path)
-            else:
-                os.chdir(os.path.dirname(path))
-                detached = ['rpm-sign', '--key', self.key, '--detachsign', 'Release', '--output', 'Release.gpg']
-                clearsign = ['rpm-sign', '--key', self.key, '--clearsign', 'Release']
-                if self.parser.has('--nat'):
-                    detached.insert( 1, '--nat')
-                    clearsign.insert( 1, '--nat')
-                logger.info('signing: %s' % path)
-                self.detached(detached)
-                self.clear_sign(path, clearsign)
+            self.sign_release(path)
 
         if self.keyfile:
             logger.info('using keyfile "%s" as release.asc' % self.keyfile)
@@ -95,3 +80,24 @@ Positional Arguments:
                     shutil.copyfile(
                         self.keyfile,
                         os.path.join(repo.path, 'release.asc'))
+
+    def sign_release(self, path):
+        """ Sign a "Release" file from a Debian repo.  """
+        if merfi.config.get('check'):
+            new_gpg_path = path.split('Release')[0]+'Release.gpg'
+            new_in_path = path.split('Release')[0]+'InRelease'
+            logger.info('[CHECKMODE] signing: %s' % path)
+            logger.info('[CHECKMODE] signed: %s' % new_gpg_path)
+            logger.info('[CHECKMODE] signed: %s' % new_in_path)
+        else:
+            os.chdir(os.path.dirname(path))
+            detached = ['rpm-sign', '--key', self.key, '--detachsign',
+                        'Release', '--output', 'Release.gpg']
+            clearsign = ['rpm-sign', '--key', self.key, '--clearsign',
+                         'Release']
+            if self.parser.has('--nat'):
+                detached.insert(1, '--nat')
+                clearsign.insert(1, '--nat')
+            logger.info('signing: %s' % path)
+            self.detached(detached)
+            self.clear_sign(path, clearsign)
