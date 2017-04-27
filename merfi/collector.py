@@ -21,7 +21,7 @@ class RepoCollector(list):
                              self.path)
 
         # Check whether our root (self.path) is itself a repo.
-        if self.is_debian_repo(self.path):
+        if self._is_debian_repo(self.path):
             self.append(self.path)
             return
 
@@ -32,11 +32,11 @@ class RepoCollector(list):
         path = self.path
 
         for root, dirs, files in walk(path):
-            if self.is_debian_repo(root):
+            if self._is_debian_repo(root):
                 self.append(root)
                 continue
 
-    def is_debian_repo(self, directory):
+    def _is_debian_repo(self, directory):
         """ Is 'directory' a Debian repository ? """
         join = os.path.join
         isdir = os.path.isdir
