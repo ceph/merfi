@@ -54,12 +54,13 @@ Positional Arguments:
         self.key = self.parser.get('--key')
         if not self.key:
             raise RuntimeError('specify a --key for signing')
+        if self.keyfile:
+            logger.info('using keyfile "%s" as release.asc' % self.keyfile)
         logger.info('Starting path collection, looking for files to sign')
         repos = RepoCollector(self.path)
-        paths = repos.debian_release_files
 
-        if paths:
-            logger.info('%s matching paths found' % len(paths))
+        if repos:
+            logger.info('%s repos found' % len(repos))
             # FIXME: this should spit the actual verified command
             logger.info('will sign with the following commands:')
             logger.info('rpm-sign --key "%s" --detachsign Release --output Release.gpg' % self.key)
@@ -67,12 +68,12 @@ Positional Arguments:
         else:
             logger.warning('No paths found that matched')
 
-        for path in paths:
-            self.sign_release(path)
-
-        if self.keyfile:
-            logger.info('using keyfile "%s" as release.asc' % self.keyfile)
-            for repo in repos:
+        for repo in repos:
+            # Debian "Release" files:
+            for path in repo.releases:
+                self.sign_release(path)
+            # Public key:
+            if self.keyfile:
                 logger.info('placing release.asc in %s' % repo)
                 if merfi.config.get('check'):
                     logger.info('[CHECKMODE] writing release.asc')
