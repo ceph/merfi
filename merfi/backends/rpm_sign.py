@@ -11,8 +11,7 @@ from merfi.backends import base
 class RpmSign(base.BaseBackend):
     help_menu = 'rpm-sign handler for signing files'
     _help = """
-Signs files with rpm-sign. Crawls a given path looking for 'Release' files (by
-default)
+Signs files with rpm-sign. Crawls a given path looking for Debian repos.
 
 %s
 
@@ -26,7 +25,7 @@ Options
 
 Positional Arguments:
 
-[path]        The path to crawl for signing release files. Defaults to current
+[path]        The path to crawl for signing repos. Defaults to current
               working directory
     """
     executable = 'rpm-sign'
@@ -95,4 +94,4 @@ Positional Arguments:
                 else:
                     shutil.copyfile(
                         self.keyfile,
-                        os.path.join(repo, 'release.asc'))
+                        os.path.join(repo.path, 'release.asc'))

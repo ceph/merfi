@@ -8,8 +8,7 @@ from merfi.backends import base
 class Gpg(base.BaseBackend):
     help_menu = 'gpg handler for signing files'
     _help = """
-Signs files with gpg. Crawls a given path looking for 'Release' files (by
-default)
+Signs files with gpg. Crawls a given path looking for Debian repos.
 
 Default behavior will perform these actions on 'Release' files:
 
@@ -22,7 +21,7 @@ Options:
 
 Positional Arguments:
 
-[path]        The path to crawl for signing release files. Defaults to current
+[path]        The path to crawl for signing repos. Defaults to current
               working directory
 """
     executable = 'gpg'

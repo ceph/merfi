@@ -1,5 +1,28 @@
 from __future__ import with_statement
 import os
+from glob import glob
+
+
+class Repo(object):
+    def __init__(self, path):
+        self.path = path
+
+    def __eq__(self, other):
+        return self.path == other.path
+
+    def __repr__(self):
+        return '%s(%s)' % (self.__class__.__name__, self.path)
+
+    def __hash__(self):
+        return hash(self.__repr__())
+
+
+class DebRepo(Repo):
+    @property
+    def releases(self):
+        """ Find all the "Release" files to be signed within a Debian repo """
+        match = os.path.join(self.path, 'dists', '*', 'Release')
+        return glob(match)
 
 
 class RepoCollector(list):
@@ -21,8 +44,9 @@ class RepoCollector(list):
                              self.path)
 
         # Check whether our root (self.path) is itself a repo.
+
         if self._is_debian_repo(self.path):
-            self.append(self.path)
+            self.append(DebRepo(self.path))
             return
 
         # ... if not, walk the tree looking for repos in subdirs.
@@ -33,7 +57,7 @@ class RepoCollector(list):
 
         for root, dirs, files in walk(path):
             if self._is_debian_repo(root):
-                self.append(root)
+                self.append(DebRepo(root))
                 continue
 
     def _is_debian_repo(self, directory):
@@ -49,18 +73,8 @@ class RepoCollector(list):
 
     @property
     def debian_release_files(self):
-        """ Find all the "Release" files to be signed within a Debian repo """
+        """ Find all the "Release" files to be signed for our Debian repos """
         result = []
-
-        # Local is faster
-        walk = os.walk
-        join = os.path.join
-        isfile = os.path.isfile
-
-        for repo_path in self:
-            for root, dirs, files in walk(repo_path):
-                for dist in dirs:
-                    release_file = join(root, dist, 'Release')
-                    if isfile(release_file):
-                        result.append(release_file)
+        for repo in self:
+            result.extend(repo.releases)
         return result

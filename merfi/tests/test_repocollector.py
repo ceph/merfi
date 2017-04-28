@@ -8,10 +8,9 @@ class TestRepoCollector(object):
         self.paths = RepoCollector(path='/', _eager=False)
 
     def test_simple_tree(self, deb_repotree):
-        paths = RepoCollector(path=deb_repotree)
+        repos = RepoCollector(path=deb_repotree)
         # The root of the deb_repotree fixture is itself a repository.
-        expected = [ deb_repotree ]
-        assert set(paths) == set(expected)
+        assert [r.path for r in repos] == [deb_repotree]
 
     def test_path_is_absolute(self):
         assert self.paths._abspath('/') == '/'
