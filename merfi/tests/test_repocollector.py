@@ -1,4 +1,4 @@
-from merfi.collector import RepoCollector
+from merfi.collector import RepoCollector, DebRepo
 from os.path import join, dirname
 
 
@@ -18,6 +18,11 @@ class TestRepoCollector(object):
     def test_path_is_not_absolute(self):
         assert self.repos._abspath('directory').startswith('/')
 
+    def test_debian_repo(self, deb_repotree):
+        repos = RepoCollector(deb_repotree)
+        # The root of the deb_repotree fixture is itself a repository.
+        assert repos == [DebRepo(deb_repotree)]
+
     def test_debian_release_files(self, deb_repotree):
         repos = RepoCollector(deb_repotree)
         release_files = repos.debian_release_files
@@ -27,6 +32,15 @@ class TestRepoCollector(object):
             join(deb_repotree, 'dists', 'xenial', 'Release'),
         ]
         assert set(release_files) == set(expected)
+
+    def test_nested_debian_repo(self, nested_deb_repotree):
+        # go one level up
+        path = dirname(nested_deb_repotree)
+        repos = RepoCollector(path)
+        # Verify that we found the two repo trees.
+        expected = [DebRepo(join(path, 'jewel')),
+                    DebRepo(join(path, 'luminous'))]
+        assert repos == expected
 
     def test_debian_nested_release_files(self, nested_deb_repotree):
         # go one level up
