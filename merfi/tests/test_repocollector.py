@@ -35,7 +35,9 @@ class TestRepoCollector(object):
         paths = RepoCollector(path)
         release_files = paths.debian_release_files
         expected = [
-            join(nested_deb_repotree, 'dists', 'trusty', 'Release'),
-            join(nested_deb_repotree, 'dists', 'xenial', 'Release'),
+            join(path, 'jewel', 'dists', 'trusty', 'Release'),
+            join(path, 'jewel', 'dists', 'xenial', 'Release'),
+            join(path, 'luminous', 'dists', 'trusty', 'Release'),
+            join(path, 'luminous', 'dists', 'xenial', 'Release'),
         ]
         assert set(release_files) == set(expected)
