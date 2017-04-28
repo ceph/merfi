@@ -75,11 +75,3 @@ class RepoCollector(list):
         if not isdir(join(directory, 'pool')):
             return False
         return True
-
-    @property
-    def debian_release_files(self):
-        """ Find all the "Release" files to be signed for our Debian repos """
-        result = []
-        for repo in self:
-            result.extend(repo.releases)
-        return result
