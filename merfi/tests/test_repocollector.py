@@ -1,5 +1,5 @@
 from merfi.collector import RepoCollector, DebRepo
-from os.path import join, dirname
+from os.path import join
 
 
 class TestRepoCollector(object):
@@ -8,9 +8,9 @@ class TestRepoCollector(object):
         self.repos = RepoCollector(path='/', _eager=False)
 
     def test_simple_tree(self, deb_repotree):
-        repos = RepoCollector(path=deb_repotree)
-        # The root of the deb_repotree fixture is itself a repository.
-        assert [r.path for r in repos] == [deb_repotree]
+        path = join(deb_repotree, 'jewel')
+        repos = RepoCollector(path)
+        assert [r.path for r in repos] == [path]
 
     def test_path_is_absolute(self):
         assert self.repos._abspath('/') == '/'
@@ -19,37 +19,35 @@ class TestRepoCollector(object):
         assert self.repos._abspath('directory').startswith('/')
 
     def test_debian_repo(self, deb_repotree):
-        repos = RepoCollector(deb_repotree)
-        # The root of the deb_repotree fixture is itself a repository.
-        assert repos == [DebRepo(deb_repotree)]
+        # Select the root of one repository in our fixture.
+        path = join(deb_repotree, 'jewel')
+        repos = RepoCollector(path)
+        assert repos == [DebRepo(path)]
 
     def test_debian_release_files(self, deb_repotree):
-        repos = RepoCollector(deb_repotree)
-        # The root of the deb_repotree fixture is itself a repository.
+        # Select the root of one repository in our fixture.
+        path = join(deb_repotree, 'jewel')
+        repos = RepoCollector(path)
         expected = [
-            join(deb_repotree, 'dists', 'trusty', 'Release'),
-            join(deb_repotree, 'dists', 'xenial', 'Release'),
+            join(path, 'dists', 'trusty', 'Release'),
+            join(path, 'dists', 'xenial', 'Release'),
         ]
         assert set(repos[0].releases) == set(expected)
 
     def test_nested_debian_repo(self, deb_repotree):
-        # go one level up
-        path = dirname(deb_repotree)
-        repos = RepoCollector(path)
-        # Verify that we found the two repo trees.
-        expected = [DebRepo(join(path, 'jewel')),
-                    DebRepo(join(path, 'luminous'))]
+        repos = RepoCollector(deb_repotree)
+        # Verify that we found the two repos.
+        expected = [DebRepo(join(deb_repotree, 'jewel')),
+                    DebRepo(join(deb_repotree, 'luminous'))]
         assert repos == expected
 
     def test_debian_nested_release_files(self, deb_repotree):
-        # go one level up
-        path = dirname(deb_repotree)
-        repos = RepoCollector(path)
+        repos = RepoCollector(deb_repotree)
         release_files = [rfile for repo in repos for rfile in repo.releases]
         expected = [
-            join(path, 'jewel', 'dists', 'trusty', 'Release'),
-            join(path, 'jewel', 'dists', 'xenial', 'Release'),
-            join(path, 'luminous', 'dists', 'trusty', 'Release'),
-            join(path, 'luminous', 'dists', 'xenial', 'Release'),
+            join(deb_repotree, 'jewel', 'dists', 'trusty', 'Release'),
+            join(deb_repotree, 'jewel', 'dists', 'xenial', 'Release'),
+            join(deb_repotree, 'luminous', 'dists', 'trusty', 'Release'),
+            join(deb_repotree, 'luminous', 'dists', 'xenial', 'Release'),
         ]
         assert set(release_files) == set(expected)
