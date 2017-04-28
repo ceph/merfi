@@ -9,3 +9,9 @@ FIXTURES_DIR = os.path.join(TESTS_DIR, 'fixtures')
 def deb_repotree(request):
     """ Return a directory of Debian repositories to sign. """
     return os.path.join(FIXTURES_DIR, 'debrepos')
+
+
+@pytest.fixture(scope="function")
+def rpm_repotree(request):
+    """ Return a directory of RPM repositories to sign. """
+    return os.path.join(FIXTURES_DIR, 'rpmrepos')
