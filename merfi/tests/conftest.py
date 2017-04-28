@@ -9,9 +9,3 @@ FIXTURES_DIR = os.path.join(TESTS_DIR, 'fixtures')
 def deb_repotree(request):
     """ Return a single Debian repository to sign. """
     return os.path.join(FIXTURES_DIR, 'debrepos', 'jewel')
-
-
-@pytest.fixture(scope="function")
-def nested_deb_repotree(request):
-    """ Return a single Debian repository to sign. """
-    return os.path.join(FIXTURES_DIR, 'debrepos', 'jewel')

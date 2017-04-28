@@ -32,18 +32,18 @@ class TestRepoCollector(object):
         ]
         assert set(repos[0].releases) == set(expected)
 
-    def test_nested_debian_repo(self, nested_deb_repotree):
+    def test_nested_debian_repo(self, deb_repotree):
         # go one level up
-        path = dirname(nested_deb_repotree)
+        path = dirname(deb_repotree)
         repos = RepoCollector(path)
         # Verify that we found the two repo trees.
         expected = [DebRepo(join(path, 'jewel')),
                     DebRepo(join(path, 'luminous'))]
         assert repos == expected
 
-    def test_debian_nested_release_files(self, nested_deb_repotree):
+    def test_debian_nested_release_files(self, deb_repotree):
         # go one level up
-        path = dirname(nested_deb_repotree)
+        path = dirname(deb_repotree)
         repos = RepoCollector(path)
         release_files = [rfile for repo in repos for rfile in repo.releases]
         expected = [
