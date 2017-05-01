@@ -42,16 +42,22 @@ Positional Arguments:
             logger.warning('No paths found that matched')
 
         for path in paths:
-            if merfi.config.get('check'):
-                new_gpg_path = path.split('Release')[0]+'Release.gpg'
-                new_in_path = path.split('Release')[0]+'InRelease'
-                logger.info('[CHECKMODE] signing: %s' % path)
-                logger.info('[CHECKMODE] signed: %s' % new_gpg_path)
-                logger.info('[CHECKMODE] signed: %s' % new_in_path)
-            else:
-                os.chdir(os.path.dirname(path))
-                detached = ['gpg', '--batch', '--yes', '--armor', '--detach-sig', '--output', 'Release.gpg', 'Release']
-                clearsign = ['gpg', '--batch', '--yes', '--clearsign', '--output', 'InRelease', 'Release']
-                logger.info('signing: %s' % path)
-                util.run(detached)
-                util.run(clearsign)
+            self.sign_release(path)
+
+    def sign_release(self, path):
+        """ Sign a "Release" file from a Debian repo.  """
+        if merfi.config.get('check'):
+            new_gpg_path = path.split('Release')[0]+'Release.gpg'
+            new_in_path = path.split('Release')[0]+'InRelease'
+            logger.info('[CHECKMODE] signing: %s' % path)
+            logger.info('[CHECKMODE] signed: %s' % new_gpg_path)
+            logger.info('[CHECKMODE] signed: %s' % new_in_path)
+        else:
+            os.chdir(os.path.dirname(path))
+            detached = ['gpg', '--batch', '--yes', '--armor', '--detach-sig',
+                        '--output', 'Release.gpg', 'Release']
+            clearsign = ['gpg', '--batch', '--yes', '--clearsign', '--output',
+                         'InRelease', 'Release']
+            logger.info('signing: %s' % path)
+            util.run(detached)
+            util.run(clearsign)
