@@ -1,4 +1,4 @@
-from merfi.collector import RepoCollector, DebRepo
+from merfi.collector import RepoCollector, DebRepo, RpmRepo, Rpm
 from os.path import join
 
 
@@ -51,3 +51,39 @@ class TestRepoCollector(object):
             join(deb_repotree, 'luminous', 'dists', 'xenial', 'Release'),
         ]
         assert set(release_files) == set(expected)
+
+    def test_rpm_repo(self, rpm_repotree):
+        # Select the root of one repository in our fixture.
+        path = join(rpm_repotree, 'jewel', 'el6')
+        repos = RepoCollector(path)
+        assert repos == [RpmRepo(path)]
+
+    def test_rpm_repo_path(self, rpm_repotree):
+        path = join(rpm_repotree, 'jewel')
+        repos = RepoCollector(path)
+        expected = [
+            join(rpm_repotree, 'jewel', 'el6'),
+            join(rpm_repotree, 'jewel', 'el7'),
+        ]
+        assert set([r.path for r in repos]) == set(expected)
+
+    def test_rpm_repo_rpms(self, rpm_repotree):
+        repos = RepoCollector(rpm_repotree)
+        expected = [
+            Rpm(join(rpm_repotree, 'jewel', 'el6', 'test.el6.rpm')),
+            Rpm(join(rpm_repotree, 'jewel', 'el7', 'test.el7.rpm')),
+            Rpm(join(rpm_repotree, 'luminous', 'el6', 'test.el6.rpm')),
+            Rpm(join(rpm_repotree, 'luminous', 'el7', 'test.el7.rpm')),
+        ]
+        result = [rfile for repo in repos for rfile in repo.rpms]
+        assert set(result) == set(expected)
+
+    def test_rpm_repo_repomd(self, rpm_repotree):
+        repos = RepoCollector(rpm_repotree)
+        expected = [
+            join(rpm_repotree, 'jewel', 'el6', 'repodata', 'repomd.xml'),
+            join(rpm_repotree, 'jewel', 'el7', 'repodata', 'repomd.xml'),
+            join(rpm_repotree, 'luminous', 'el6', 'repodata', 'repomd.xml'),
+            join(rpm_repotree, 'luminous', 'el7', 'repodata', 'repomd.xml'),
+        ]
+        assert set([r.repomd for r in repos]) == set(expected)
