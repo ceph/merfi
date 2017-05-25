@@ -47,10 +47,11 @@ class TestRpmSign(RpmSign):
         assert self.backend.detached.calls == []
         assert self.backend.clear_sign.calls == []
 
-    def test_sign_two_files_detached_and_clearsign(self, deb_repotree):
+    def test_sign_four_files_detached_and_clearsign(self, deb_repotree):
+        # jewel and luminous, trusty and xenial
         self.sign(deb_repotree)
-        assert len(self.backend.detached.calls) == 2
-        assert len(self.backend.clear_sign.calls) == 2
+        assert len(self.backend.detached.calls) == 4
+        assert len(self.backend.clear_sign.calls) == 4
 
     def test_sign_two_files_path(self, deb_repotree):
         self.sign(deb_repotree)
@@ -87,7 +88,8 @@ class TestRpmSignKeyfile(RpmSign):
         keyfile = tmpdir.join('RPM-GPG-KEY-testing')
         keyfile.write('-----BEGIN PGP PUBLIC KEY BLOCK-----')
         # Copy deb repo fixture to tmpdir for writing
-        copytree(deb_repotree, str(tmpdir.join('repo')))
+        src = os.path.join(deb_repotree, 'jewel')
+        copytree(src, str(tmpdir.join('repo')))
         # fake command-line args
         argv = ['merfi', '--key', 'mykey', '--keyfile', str(keyfile)]
         backend.parser = Transport(argv, options=backend.options)
