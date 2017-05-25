@@ -25,13 +25,12 @@ class TestRepoCollector(object):
 
     def test_debian_release_files(self, deb_repotree):
         repos = RepoCollector(deb_repotree)
-        release_files = repos.debian_release_files
         # The root of the deb_repotree fixture is itself a repository.
         expected = [
             join(deb_repotree, 'dists', 'trusty', 'Release'),
             join(deb_repotree, 'dists', 'xenial', 'Release'),
         ]
-        assert set(release_files) == set(expected)
+        assert set(repos[0].releases) == set(expected)
 
     def test_nested_debian_repo(self, nested_deb_repotree):
         # go one level up
@@ -46,7 +45,7 @@ class TestRepoCollector(object):
         # go one level up
         path = dirname(nested_deb_repotree)
         repos = RepoCollector(path)
-        release_files = repos.debian_release_files
+        release_files = [rfile for repo in repos for rfile in repo.releases]
         expected = [
             join(path, 'jewel', 'dists', 'trusty', 'Release'),
             join(path, 'jewel', 'dists', 'xenial', 'Release'),
