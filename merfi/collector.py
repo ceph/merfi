@@ -16,6 +16,11 @@ class Repo(object):
     def __hash__(self):
         return hash(self.__repr__())
 
+    @property
+    def releases(self):
+        """ DebRepo overrides this. """
+        return []
+
 
 class DebRepo(Repo):
     @property

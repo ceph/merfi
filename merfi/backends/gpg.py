@@ -30,10 +30,9 @@ Positional Arguments:
     def sign(self):
         logger.info('Starting path collection, looking for files to sign')
         repos = RepoCollector(self.path)
-        paths = repos.debian_release_files
 
-        if paths:
-            logger.info('%s matching paths found' % len(paths))
+        if repos:
+            logger.info('%s repos found' % len(repos))
             # FIXME: this should spit the actual verified command
             logger.info('will sign with the following commands:')
             logger.info('gpg --batch --yes --armor --detach-sig --output Release.gpg Release')
@@ -41,8 +40,10 @@ Positional Arguments:
         else:
             logger.warning('No paths found that matched')
 
-        for path in paths:
-            self.sign_release(path)
+        for repo in repos:
+            # Debian "Release" files:
+            for path in repo.releases:
+                self.sign_release(path)
 
     def sign_release(self, path):
         """ Sign a "Release" file from a Debian repo.  """
