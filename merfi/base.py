@@ -1,7 +1,3 @@
-import os
-from tambo import Transport
-import merfi
-from merfi import logger
 from merfi import util
 
 
