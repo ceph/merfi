@@ -33,10 +33,6 @@ Positional Arguments:
 
         if repos:
             logger.info('%s repos found' % len(repos))
-            # FIXME: this should spit the actual verified command
-            logger.info('will sign with the following commands:')
-            logger.info('gpg --batch --yes --armor --detach-sig --output Release.gpg Release')
-            logger.info('gpg --batch --yes --clearsign --output InRelease Release')
         else:
             logger.warning('No paths found that matched')
 
