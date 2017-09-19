@@ -1,8 +1,7 @@
 from hashlib import sha256
 import os
 from tambo import Transport
-import merfi
-from merfi import logger, util, base
+from merfi import util, base
 
 
 class Iso(base.BaseCommand):
