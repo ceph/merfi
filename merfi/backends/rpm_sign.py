@@ -39,6 +39,17 @@ Positional Arguments:
         """
         logger.info('signing: %s' % path)
         out, err, code = util.run_output(command)
+        if code != 0:
+            for line in err.split('\n'):
+                logger.error('stderr: %s', line)
+            for line in out.split('\n'):
+                logger.error('stdout: %s', line)
+            raise RuntimeError('rpm-sign non-zero exit code %d', code)
+        if out.strip() == '':
+            for line in err.split('\n'):
+                logger.error('stderr: %s', line)
+            logger.error('rpm-sign clearsign provided nothing on stdout')
+            raise RuntimeError('no clearsign signature available')
         absolute_directory = os.path.dirname(os.path.abspath(path))
         with open(os.path.join(absolute_directory, 'InRelease'), 'w') as f:
             f.write(out)
