@@ -11,7 +11,7 @@ setup(
     description = 'Signs release files',
     packages = find_packages(),
     author = 'Alfredo Deza',
-    author_email = 'alfredo [at] deza.pe',
+    author_email = 'alfredo@deza.pe',
     scripts = ['bin/merfi'],
     install_requires = ['tambo>=0.1.0'],
     version = metadata['version'],
