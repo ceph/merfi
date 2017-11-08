@@ -17,7 +17,7 @@ Signs files with rpm-sign. Crawls a given path looking for Debian repos.
 Options
 
 --key         Name of the key to use (see rpm-sign --list-keys)
---keyfile     Full path location of the public keyfile, for example
+--keyfile     File path location of the public keyfile, for example
               /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
               or /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta
 --nat         A NAT is between this system and the signing server.
@@ -59,13 +59,14 @@ Positional Arguments:
 
     def sign(self):
         self.keyfile = self.parser.get('--keyfile')
-        if self.keyfile and not os.path.isfile(self.keyfile):
-            raise RuntimeError('%s is not a file' % self.keyfile)
+        if self.keyfile:
+            self.keyfile = os.path.abspath(self.keyfile)
+            if not os.path.isfile(self.keyfile):
+                raise RuntimeError('%s is not a file' % self.keyfile)
+            logger.info('using keyfile "%s" as release.asc' % self.keyfile)
         self.key = self.parser.get('--key')
         if not self.key:
             raise RuntimeError('specify a --key for signing')
-        if self.keyfile:
-            logger.info('using keyfile "%s" as release.asc' % self.keyfile)
         logger.info('Starting path collection, looking for files to sign')
         repos = RepoCollector(self.path)
 
