@@ -85,7 +85,7 @@ Positional Arguments:
                 self.sign_release(path)
             # Public key:
             if self.keyfile:
-                logger.info('placing release.asc in %s' % repo)
+                logger.info('placing release.asc in %s' % repo.path)
                 if merfi.config.get('check'):
                     logger.info('[CHECKMODE] writing release.asc')
                 else:
