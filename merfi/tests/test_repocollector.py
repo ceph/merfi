@@ -39,7 +39,7 @@ class TestRepoCollector(object):
         # Verify that we found the two repos.
         expected = [DebRepo(join(deb_repotree, 'jewel')),
                     DebRepo(join(deb_repotree, 'luminous'))]
-        assert repos == expected
+        assert set(repos) == set(expected)
 
     def test_debian_nested_release_files(self, deb_repotree):
         repos = RepoCollector(deb_repotree)
