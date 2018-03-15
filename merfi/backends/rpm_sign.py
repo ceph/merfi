@@ -1,3 +1,4 @@
+from time import sleep
 import os
 import shutil
 import merfi
@@ -39,6 +40,18 @@ Positional Arguments:
         """
         logger.info('signing: %s' % path)
         out, err, code = util.run_output(command)
+        # Sometimes rpm-sign will fail with this error. I've opened
+        # rhbz#1557014 to resolve this server-side. For now, sleep and retry
+        # as a workaround. These sleep/retry values are suggestions from the
+        # team that runs the signing service.
+        known_failure = "ERROR: unhandled exception occurred: ('')."
+        tries = 1
+        while known_failure in err and tries < 30:
+            logger.warning('hit known rpm-sign failure.')
+            tries += 1
+            logger.warning('sleeping, running try #%d in 30 seconds.' % tries)
+            sleep(2)
+            out, err, code = util.run_output(command)
         if code != 0:
             for line in err.split('\n'):
                 logger.error('stderr: %s' % line)
