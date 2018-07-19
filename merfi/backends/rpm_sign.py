@@ -13,6 +13,10 @@ class RpmSign(base.BaseBackend):
     _help = """
 Signs files with rpm-sign. Crawls a given path looking for Debian repos.
 
+Note: this sub-command tells merfi to use Red Hat's internal signing tool
+inconveniently named "rpm-sign", not the rpmsign(8) command that is a part of
+the http://rpm.org open-source project.
+
 %s
 
 Options

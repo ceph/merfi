@@ -1,12 +1,16 @@
 `merfi`
 =======
 A helper tool to quickly crawl a file system and sign commonly used files for
-repositories, with gpg, rpm-sign, and any other similar tool.
+repositories, with gpg or rpm-sign (Red Hat's signing internal tool).
 
 *"a tool called "merfi" ... what could possibly go wrong?"*
 
 rpm-sign
 --------
+Note: this sub-command tells merfi to use Red Hat's internal signing tool
+inconveniently named ``rpm-sign``, not the ``rpmsign(8)`` command that is a
+part of the `rpm <http://rpm.org>`_ open-source project.
+
 For ``rpm-sign``, the default operation will just crawl the filesystem looking
 for Debian repositories containing  ``Release`` files. When the proper
 ``Release`` file is found, merfi will proceed to sign the file like::
