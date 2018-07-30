@@ -48,7 +48,7 @@ gpg
 ---
 GPG support is similar to ``rpm-sign`` in that merfi will crawl a path
 (defaults to the current working directory) looking for Debian repositories,
-and sign the appropriate ``Release`` files:
+and sign the appropriate ``Release`` files::
 
     $ merfi gpg
     --> signing: /Users/alfredo/repos/debian/dists/trusty/Release
