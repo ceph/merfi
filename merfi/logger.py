@@ -64,7 +64,10 @@ class LogMessage(object):
         return _level_colors.get(self.level_name, 'info')
 
     def line(self):
-        msg = self.message.rstrip('\n')
+        message = self.message
+        if isinstance(message, bytes):
+            message = message.decode('utf-8')
+        msg = message.rstrip('\n')
         return "%s %s\n" % (self.header(), msg)
 
     def write(self):
