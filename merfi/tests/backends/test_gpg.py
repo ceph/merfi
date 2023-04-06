@@ -1,4 +1,7 @@
-from mock import call, patch
+try:
+    from unittest.mock import call, patch
+except ImportError:  # PY2
+    from mock import call, patch
 import pytest
 from merfi.backends import gpg
 
