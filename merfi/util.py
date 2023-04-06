@@ -99,13 +99,13 @@ class colorize(str):
 
     @property
     def __colors__(self):
-        return  dict(
-                blue   = '\033[34m',
-                green  = '\033[92m',
-                yellow = '\033[33m',
-                red    = '\033[91m',
-                bold   = '\033[1m',
-                ends   = '\033[0m'
+        return dict(
+            blue='\033[34m',
+            green='\033[92m',
+            yellow='\033[33m',
+            red='\033[91m',
+            bold='\033[1m',
+            ends='\033[0m',
         )
 
     @property
@@ -124,6 +124,7 @@ class colorize(str):
         obj = cls(string)
         obj._set_attributes()
         return obj
+
 
 #
 # Common string manipulations
@@ -217,4 +218,3 @@ def _run(cmd, **kw):
             )
         else:
             logger.warning("command returned non-zero exit status: %s" % returncode)
-

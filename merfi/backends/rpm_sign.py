@@ -91,8 +91,10 @@ Positional Arguments:
             logger.info('%s repos found' % len(repos))
             # FIXME: this should spit the actual verified command
             logger.info('will sign with the following commands:')
-            logger.info('rpm-sign --key "%s" --detachsign Release --output Release.gpg' % self.key)
-            logger.info('rpm-sign --key "%s" --clearsign Release --output InRelease' % self.key)
+            logger.info(
+                'rpm-sign --key "%s" --detachsign Release --output Release.gpg' % self.key)
+            logger.info(
+                'rpm-sign --key "%s" --clearsign Release --output InRelease' % self.key)
         else:
             logger.warning('No paths found that matched')
 

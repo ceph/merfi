@@ -10,22 +10,22 @@ INFO = 2
 DEBUG = 1
 
 _level_names = {
-    CRITICAL : 'critical',
-    WARNING  : 'warning',
-    INFO     : 'info',
-    ERROR    : 'error',
-    DEBUG    : 'debug'
+    CRITICAL: 'critical',
+    WARNING: 'warning',
+    INFO: 'info',
+    ERROR: 'error',
+    DEBUG: 'debug'
 }
 
 _reverse_level_names = dict((v, k) for (k, v) in _level_names.items())
 
 _level_colors = {
-    'remote'   : 'bold',
-    'critical' : 'red',
-    'warning'  : 'yellow',
-    'info'     : 'blue',
-    'debug'    : 'blue',
-    'error'    : 'red'
+    'remote': 'bold',
+    'critical': 'red',
+    'warning': 'yellow',
+    'info': 'blue',
+    'debug': 'blue',
+    'error': 'red'
 }
 
 

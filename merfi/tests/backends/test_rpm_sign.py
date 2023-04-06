@@ -6,12 +6,14 @@ from shutil import copytree
 import pytest
 from tambo import Transport
 
+
 @pytest.fixture
 def rpmsign(request):
     backend = rpm_sign.RpmSign([])
     backend.detached = CallRecorder()
     backend.clear_sign = CallRecorder()
     return backend
+
 
 class RpmSign(object):
 
@@ -80,6 +82,7 @@ class TestRpmClearSign(RpmSign):
         assert first_path.endswith('/Release')
         assert second_path.endswith('/Release')
 
+
 class TestRpmSignKeyfile(RpmSign):
 
     def test_keyfile_path(self, deb_repotree, rpmsign, tmpdir):
@@ -99,6 +102,7 @@ class TestRpmSignKeyfile(RpmSign):
 
         release_key = tmpdir.join('repo').join('release.asc')
         assert cmp(str(keyfile), str(release_key))
+
 
 class TestRpmSignNat(RpmSign):
 
