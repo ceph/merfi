@@ -4,6 +4,7 @@ import subprocess
 from merfi.iso import Iso
 from merfi.util import which
 
+
 class TestIso(object):
 
     def create_fake_iso(self, output_dir):
@@ -46,5 +47,5 @@ class TestIso(object):
 
     @pytest.mark.skipif(which('genisoimage') is None, reason='genisoimage is not installed')
     def test_make_iso(self, tmpdir):
-        iso = self.create_real_iso(tmpdir)
+        self.create_real_iso(tmpdir)
         assert os.path.isfile(str(tmpdir.join('my-test-contents-dvd.iso')))
